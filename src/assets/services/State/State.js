@@ -18,14 +18,15 @@ export class State extends BaseComponent {
 	}
 
 	main(auth$, lectureComplete$, taskComplete$) {
-		const {authFailed$, lectures$, tasks$, userData$} = State.auth(auth$);
+		const {authFailed$, contents$, userData$} = State.auth(auth$);
 		const {showNextLecture$, showNextTask$} = State.nextStep(lectureComplete$, taskComplete$);
 
 		return {
 			[ SIGNALS.AUTH_FAILED ]: authFailed$,
 			[ SIGNALS.AUTH_SUCCESS ]: userData$,
-			[ SIGNALS.SHOW_LECTURE ]: es.merge(lectures$, showNextLecture$),
-			[ SIGNALS.SHOW_TASK ]: es.merge(tasks$, showNextTask$)
+			[ SIGNALS.SHOW_LECTURE ]: showNextLecture$,
+			[ SIGNALS.SHOW_TASK ]: showNextTask$,
+			[ SIGNALS.SHOW_CONTENTS ]: contents$
 		};
 	}
 
@@ -54,17 +55,23 @@ export class State extends BaseComponent {
 				val => val.userData
 			);
 
-		const { lectures$, tasks$ } = State.getAfterAuth(userData$);
+		const contents$ = State.getAfterAuth(userData$);
 
 		return {
 			authFailed$,
-			lectures$,
-			tasks$,
+			contents$,
 			userData$
 		};
 	}
 
 	static getAfterAuth(userData$) {
+		return es.flatMap(
+			userData$,
+			StateModel.getContents
+		);
+	}
+
+	static getAfterAuth2(userData$) {
 		const userState$ =
 			es.map(
 				userData$,

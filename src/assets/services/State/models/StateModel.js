@@ -1,5 +1,8 @@
 'use strict';
 
+import ajax from 'ajax';
+import {EventStream as es} from 'event-streams';
+
 const LECTURE_TYPE = 1;
 const TASK_TYPE = 2;
 
@@ -85,5 +88,15 @@ export class StateModel {
 
 	static getNextStep(id) {
 		return Lectures[id];
+	}
+
+	static getContents() {
+		const contents$ = es.EventStream();
+
+		ajax.get('/api/contents', {}, data => {
+			es.push(contents$, data);
+		});
+
+		return contents$;
 	}
 }

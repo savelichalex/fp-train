@@ -26,10 +26,16 @@
     "webpack": "^1.12.14"
   },
   "dependencies": {
+    "ajax": "0.0.4",
+    "bluebird": "^3.3.3",
     "express": "^4.13.4",
     "jeet": "^6.1.2",
+    "material-design-lite": "^1.1.1",
+    "material-ui": "^0.14.4",
+    "normalize-styl": "^3.0.3",
     "pg": "^4.5.1",
     "react": "^0.14.7",
-    "react-dom": "^0.14.7"
+    "react-dom": "^0.14.7",
+    "react-tap-event-plugin": "^0.2.2"
   }
 }

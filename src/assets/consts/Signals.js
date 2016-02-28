@@ -9,5 +9,6 @@ export const SIGNALS = {
 	SHOW_TASK: 'showTask',
 	COMPLETE_TASK: 'completeTask',
 	CHECK_TASK: 'checkTask',
-	CHECK_CODE: 'checkCode'
+	CHECK_CODE: 'checkCode',
+	SHOW_CONTENTS: 'showContents'
 };

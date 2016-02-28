@@ -10,28 +10,22 @@ import {SIGNALS} from '../../consts/Signals';
 //views
 import {LoginView} from './views/LoginView';
 
-const container = document.getElementById('auth');
+const container = <div id="auth"></div>;
 
 export class Auth extends BaseComponent {
 
 	slots() {
 		return [
-			SIGNALS.AUTH_FAILED,
-			SIGNALS.AUTH_SUCCESS
+			SIGNALS.AUTH_FAILED
 		];
 	}
 
-	main(authFailed$, authSuccess$) {
+	main(authFailed$) {
 		const authAfterFailed$ =
 			es.flatMap(
 				authFailed$,
 				Auth.renderAuthForm
 			);
-
-		es.subscribe(
-			authSuccess$,
-			() => { container.style.display = 'none'; }
-		);
 
 		return {
 			[ SIGNALS.CHECK_AUTH ]: es.merge(Auth.renderAuthForm(), authAfterFailed$)
@@ -39,12 +33,21 @@ export class Auth extends BaseComponent {
 	}
 
 	static renderAuthForm(data = {}) {
+		let wrapper = document.getElementById('auth');
+		if(!wrapper) {
+			wrapper = ReactDOM.render(
+				container,
+				document.getElementById('main')
+			);
+		}
 		const auth$ = es.EventStream();
 
 		ReactDOM.render(
 			<LoginView auth$={auth$} data={data} />,
-			container
+			wrapper
 		);
+
+		es.subscribe(auth$, val => console.log(val));
 
 		return auth$;
 	}

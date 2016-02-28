@@ -1,35 +1,39 @@
 'use strict';
 
-import React, { Component } from 'react';
-import { EventStream as es } from 'event-streams';
+import React, {Component} from 'react';
+import {EventStream as es} from 'event-streams';
+
+import Card from 'material-ui/lib/card/card';
+import TextField from 'material-ui/lib/text-field';
+import RaisedButton from 'material-ui/lib/raised-button';
 
 export class LoginView extends Component {
 
 	render() {
 		const username =
 			this.props.data.username ?
-				<input type="text" placeholder="Username" ref="username" style={{border: '1px solid red'}}/> :
-				<input type="text" placeholder="Username" ref="username"/>;
+				<TextField hintText="Username" errorText="Incorrect username" ref="username"></TextField> :
+				<TextField hintText="Username" ref="username"></TextField>;
 
 		const password =
 			this.props.data.password ?
-				<input type="text" placeholder="Password" ref="password" style={{border: '1px solid red'}}/> :
-				<input type="text" placeholder="Password" ref="password"/>;
+				<TextField hintText="Password" errorText="Incorrect password" type="password" ref="password"></TextField> :
+				<TextField hintText="Password" type="password" ref="password"></TextField>;
 
 		return (
-			<div>
+			<Card>
 				<h2>Log in</h2>
 				{username}
 				{password}
-				<button onClick={() => this.collectData()}>OK</button>
-			</div>
+				<RaisedButton onClick={() => this.collectData()}>OK</RaisedButton>
+			</Card>
 		);
 	}
 
 	collectData() {
 		es.push(this.props.auth$, {
-			username: this.refs.username.value,
-			password: this.refs.password.value
+			username: this.refs.username.getValue(),
+			password: this.refs.password.getValue()
 		});
 	}
 

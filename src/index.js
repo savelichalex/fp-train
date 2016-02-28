@@ -7,8 +7,13 @@ import {EventStream as es} from 'event-streams';
 import pg from 'pg';
 import express from 'express';
 import fs from 'fs';
+import path from 'path';
 
 const app = express();
+
+app.use(express.static(__dirname + '/static'));
+
+app.get('/', (req, res) => fs.readFile(__dirname + path.sep + path.join('web', 'index.html'), 'utf8', (err, file) => res.send(file)));
 
 const connection = 'postgres://savelichalex:119911@localhost/fp_train';
 

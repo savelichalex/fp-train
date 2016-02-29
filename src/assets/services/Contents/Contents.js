@@ -29,7 +29,7 @@ export class Contents extends BaseComponent {
 			);
 
 		return {
-
+			[ SIGNALS.CHOOSE_LECTURE ]: contentsView$
 		};
 	}
 

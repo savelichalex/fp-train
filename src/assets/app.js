@@ -12,7 +12,7 @@ import { Contents } from './services/Contents/Contents';
 
 new State();
 new Auth();
-// new TextArea();
+new TextArea();
 // new Editor();
 new Contents();
 

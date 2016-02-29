@@ -13,18 +13,25 @@ export class State extends BaseComponent {
 		return [
 			SIGNALS.CHECK_AUTH,
 			SIGNALS.COMPLETE_LECTURE,
-			SIGNALS.COMPLETE_TASK
+			SIGNALS.COMPLETE_TASK,
+			SIGNALS.CHOOSE_LECTURE
 		];
 	}
 
-	main(auth$, lectureComplete$, taskComplete$) {
+	main(auth$, lectureComplete$, taskComplete$, chooseLecture$) {
 		const {authFailed$, contents$, userData$} = State.auth(auth$);
 		const {showNextLecture$, showNextTask$} = State.nextStep(lectureComplete$, taskComplete$);
+
+		const lectures$ =
+			es.flatMap(
+				chooseLecture$,
+				StateModel.getLecture
+			);
 
 		return {
 			[ SIGNALS.AUTH_FAILED ]: authFailed$,
 			[ SIGNALS.AUTH_SUCCESS ]: userData$,
-			[ SIGNALS.SHOW_LECTURE ]: showNextLecture$,
+			[ SIGNALS.SHOW_LECTURE ]: lectures$,
 			[ SIGNALS.SHOW_TASK ]: showNextTask$,
 			[ SIGNALS.SHOW_CONTENTS ]: contents$
 		};

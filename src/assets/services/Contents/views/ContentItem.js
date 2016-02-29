@@ -1,6 +1,7 @@
 'use strict';
 
 import React, {Component} from 'react';
+import {EventStream as es} from 'event-streams';
 
 import Avatar from 'material-ui/lib/avatar';
 import ListItem from 'material-ui/lib/lists/list-item';
@@ -13,8 +14,9 @@ export class ContentItem extends Component {
 			<ListItem
 				primaryText={this.props.header}
 				leftAvatar={
-					<Avatar color={Colors.blueGrey200} backgroundColor={Colors.transparent}>{this.props.index}</Avatar>
+					<Avatar color={Colors.pinkA100} backgroundColor={Colors.transparent}>{this.props.index}</Avatar>
 					}
+			    onClick={() => es.push(this.props.contents$, this.props.id)}
 			>
 			</ListItem>
 		);

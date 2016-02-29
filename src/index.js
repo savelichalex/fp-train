@@ -182,7 +182,7 @@ class Article extends BaseComponent {
 				Article.getDataFromDb(id),
 				Article.getDataFromFile(id)
 			),
-			([{examples, next_id, previous_id}], text) => {
+			([{examples, next_id, previous_id}, text]) => {
 				const data = {};
 				if(examples) {
 					Object.assign(data, {
@@ -220,7 +220,7 @@ class Article extends BaseComponent {
 			if(err) {
 				es.throwError(fromDb$, err);
 			} else {
-				client.query('SELECT * FROM articles WHERE $1::int', [id], (err, result) => {
+				client.query('SELECT * FROM articles WHERE id=$1::int', [id], (err, result) => {
 					done();
 
 					if(err) {
@@ -241,7 +241,7 @@ class Article extends BaseComponent {
 	static getDataFromFile(id) {
 		const fromFile$ = es.EventStream();
 
-		fs.readFile('./static/markdown/article' + id + '.md', 'utf8', (err, file) => {
+		fs.readFile(__dirname + '/static/markdown/article' + id + '.md', 'utf8', (err, file) => {
 			if(err) {
 				es.throwError(fromFile$, err);
 			} else {
@@ -357,5 +357,7 @@ class Task extends BaseComponent {
 
 new App();
 new Contents();
+new Article();
+new Task();
 
 app.listen(3000);

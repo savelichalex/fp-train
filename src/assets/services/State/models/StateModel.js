@@ -6,38 +6,6 @@ import {EventStream as es} from 'event-streams';
 const LECTURE_TYPE = 1;
 const TASK_TYPE = 2;
 
-const Lectures = {
-	1: {
-		type: LECTURE_TYPE,
-		header: 'Test lecture',
-		mainText: [
-			'sdfsdfsdfsdfsdfsdf'
-		],
-		code: '(defn test [] "test")',
-		nextId: 2
-	},
-	2: {
-		type: LECTURE_TYPE,
-		header: 'Second test lecture',
-		mainText: [
-			'sdfsdfsdfsdfsdsdfsdfsdfsdfsdfsdf'
-		],
-		code: '(defn second-lecture [] "yeah")',
-		previousId: 1,
-		nextId: 3
-	},
-	3: {
-		type: LECTURE_TYPE,
-		header: 'Third test lecture',
-		mainText: [
-			'sdfsdfsdfsdf',
-			'sdfsdfsdfsdf',
-			'sdfsdfsdfsdf'
-		],
-		previousId: 2
-	}
-};
-
 export class StateModel {
 
 	static checkAuthorizedData({username, password}) {
@@ -79,7 +47,13 @@ export class StateModel {
 	}
 
 	static getLecture(id) {
-		return Lectures[id];
+		const lecture$ = es.EventStream();
+
+		ajax.get('/api/article/' + id, {}, data => {
+			es.push(lecture$, data);
+		});
+
+		return lecture$;
 	}
 
 	static getTask(id) {

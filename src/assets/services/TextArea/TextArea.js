@@ -11,7 +11,7 @@ import {SIGNALS} from '../../consts/Signals';
 //views
 import { LectureView } from './views/LectureView';
 
-const container = document.getElementById('text-area');
+const container = <div id="text-area"></div>;
 
 export class TextArea extends BaseComponent {
 
@@ -36,17 +36,19 @@ export class TextArea extends BaseComponent {
 				TextArea.renderTask
 			);
 
-		es.subscribe(
-			authSuccess$,
-			() => { container.removeAttribute('style'); }
-		);
-
 		return {
 			[ SIGNALS.COMPLETE_LECTURE ]: chooseLecture$
 		}
 	}
 
 	static renderLecture(data) {
+		let wrapper = document.getElementById('text-area');
+		if(!wrapper) {
+			wrapper = ReactDOM.render(
+				container,
+				document.getElementById('main')
+			);
+		}
 		const previous$ = es.EventStream();
 		const next$ = es.EventStream();
 
@@ -55,7 +57,7 @@ export class TextArea extends BaseComponent {
 				data={data}
 				previous$={previous$}
 				next$={next$} />,
-			container
+			wrapper
 		);
 
 		return es.merge(previous$, next$);

@@ -16,19 +16,26 @@ export class Auth extends BaseComponent {
 
 	slots() {
 		return [
+			SIGNALS.SHOW_AUTH,
 			SIGNALS.AUTH_FAILED
 		];
 	}
 
-	main(authFailed$) {
+	main(showAuth$, authFailed$) {
+		const showedAuth$ =
+			      es.flatMap(
+				      showAuth$,
+				      Auth.renderAuthForm
+			      );
+
 		const authAfterFailed$ =
-			es.flatMap(
-				authFailed$,
-				Auth.renderAuthForm
-			);
+			      es.flatMap(
+				      authFailed$,
+				      Auth.renderAuthForm
+			      );
 
 		return {
-			[ SIGNALS.CHECK_AUTH ]: es.merge(Auth.renderAuthForm(), authAfterFailed$)
+			[ SIGNALS.CHECK_AUTH ]: es.merge(showedAuth$, authAfterFailed$)
 		};
 	}
 
@@ -43,7 +50,7 @@ export class Auth extends BaseComponent {
 		const auth$ = es.EventStream();
 
 		ReactDOM.render(
-			<LoginView auth$={auth$} data={data} />,
+			<LoginView auth$={auth$} data={data}/>,
 			wrapper
 		);
 

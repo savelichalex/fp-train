@@ -7,66 +7,70 @@ import {SIGNALS} from '../../consts/Signals';
 
 import {StateModel} from './models/StateModel';
 
+import { history } from '../Router/Router';
+
 export class State extends BaseComponent {
 
 	slots() {
 		return [
 			SIGNALS.CHECK_AUTH,
-			SIGNALS.COMPLETE_LECTURE,
-			SIGNALS.COMPLETE_TASK,
+			SIGNALS.GET_CONTENTS,
 			SIGNALS.CHOOSE_LECTURE
 		];
 	}
 
-	main(auth$, lectureComplete$, taskComplete$, chooseLecture$) {
-		const {authFailed$, contents$, userData$} = State.auth(auth$);
-		const {showNextLecture$, showNextTask$} = State.nextStep(lectureComplete$, taskComplete$);
+	main(auth$, getContents$, chooseLecture$) {
+		const contents$ = State.getAfterAuth(getContents$);
+		const {authFailed$, userData$} = State.auth(auth$);
 
 		const lectures$ =
-			es.flatMap(
-				chooseLecture$,
-				StateModel.getLecture
-			);
+			      es.flatMap(
+				      chooseLecture$,
+				      StateModel.getLecture
+			      );
 
 		return {
 			[ SIGNALS.AUTH_FAILED ]: authFailed$,
 			[ SIGNALS.AUTH_SUCCESS ]: userData$,
 			[ SIGNALS.SHOW_LECTURE ]: lectures$,
-			[ SIGNALS.SHOW_TASK ]: showNextTask$,
 			[ SIGNALS.SHOW_CONTENTS ]: contents$
 		};
 	}
 
 	static auth(auth$) {
 		const isAuth$ =
-			es.map(
-				auth$,
-				data => StateModel.checkAuthorizedData(data)
-			);
+			      es.map(
+				      auth$,
+				      data => StateModel.checkAuthorizedData(data)
+			      );
 
 		const authFailed$ =
-			es.map(
-				es.filter(
-					isAuth$,
-					val => !val.status
-				),
-				val => val.errorCode
-			);
+			      es.map(
+				      es.filter(
+					      isAuth$,
+					      val => !val.status
+				      ),
+				      val => val.errorCode
+			      );
 
 		const userData$ =
-			es.map(
-				es.filter(
-					isAuth$,
-					val => !!val.status
-				),
-				val => val.userData
-			);
+			      es.map(
+				      es.filter(
+					      isAuth$,
+					      val => !!val.status
+				      ),
+				      val => val.userData
+			      );
 
-		const contents$ = State.getAfterAuth(userData$);
+		es.subscribe(
+			userData$,
+			() => history.push({
+				pathname: '/'
+			})
+		);
 
 		return {
 			authFailed$,
-			contents$,
 			userData$
 		};
 	}
@@ -80,28 +84,28 @@ export class State extends BaseComponent {
 
 	static getAfterAuth2(userData$) {
 		const userState$ =
-			es.map(
-				userData$,
-				StateModel.getUserState
-			);
+			      es.map(
+				      userData$,
+				      StateModel.getUserState
+			      );
 
 		const lectures$ =
-			es.map(
-				es.filter(
-					userState$,
-					StateModel.isLectureType
-				),
-				({id}) => StateModel.getLecture(id)
-			);
+			      es.map(
+				      es.filter(
+					      userState$,
+					      StateModel.isLectureType
+				      ),
+				      ({id}) => StateModel.getLecture(id)
+			      );
 
 		const tasks$ =
-			es.map(
-				es.filter(
-					userState$,
-					StateModel.isTaskType
-				),
-				({id}) => StateModel.getTask(id)
-			);
+			      es.map(
+				      es.filter(
+					      userState$,
+					      StateModel.isTaskType
+				      ),
+				      ({id}) => StateModel.getTask(id)
+			      );
 
 		return {
 			lectures$,
@@ -111,22 +115,22 @@ export class State extends BaseComponent {
 
 	static nextStep(lectureComplete$, taskComplete$) {
 		const nextStep$ =
-			es.map(
-				es.merge(lectureComplete$, taskComplete$),
-				StateModel.getNextStep
-			);
+			      es.map(
+				      es.merge(lectureComplete$, taskComplete$),
+				      StateModel.getNextStep
+			      );
 
 		const showNextLecture$ =
-			es.filter(
-				nextStep$,
-				StateModel.isLectureType
-			);
+			      es.filter(
+				      nextStep$,
+				      StateModel.isLectureType
+			      );
 
 		const showNextTask$ =
-			es.filter(
-				nextStep$,
-				StateModel.isTaskType
-			);
+			      es.filter(
+				      nextStep$,
+				      StateModel.isTaskType
+			      );
 
 		return {
 			showNextLecture$,

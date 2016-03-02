@@ -2,6 +2,7 @@
 
 export const SIGNALS = {
 	CHECK_AUTH: 'checkAuthorize',
+	SHOW_AUTH: 'showAuth',
 	AUTH_FAILED: 'authFailed',
 	AUTH_SUCCESS: 'authSuccess',
 	SHOW_LECTURE: 'showLecture',
@@ -11,5 +12,7 @@ export const SIGNALS = {
 	COMPLETE_TASK: 'completeTask',
 	CHECK_TASK: 'checkTask',
 	CHECK_CODE: 'checkCode',
-	SHOW_CONTENTS: 'showContents'
+	GET_CONTENTS: 'getContents',
+	SHOW_CONTENTS: 'showContents',
+	NOT_FOUND: 'notFound'
 };

@@ -25,7 +25,10 @@ export class Router extends BaseComponent {
 
 	static get routes() {
 		return [
-			/^\/lecture\/(\d+)/, SIGNALS.CHOOSE_LECTURE
+			/^\/lecture\/(\d+)/, SIGNALS.CHOOSE_LECTURE,
+			/^\/signin/, SIGNALS.SHOW_AUTH,
+			/^\/$/, SIGNALS.GET_CONTENTS,
+			/^\//, SIGNALS.NOT_FOUND
 		];
 	}
 

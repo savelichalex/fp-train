@@ -11,7 +11,12 @@ const app = express();
 
 app.use(express.static(__dirname + '/static'));
 
-app.get('/', (req, res) => fs.readFile(__dirname + path.sep + path.join('web', 'index.html'), 'utf8', (err, file) => res.send(file)));
+app.get('*', (req, res, next) => {
+	if(/^\/api\//.test(req.url)) {
+		return next();
+	}
+	fs.readFile(__dirname + path.sep + path.join('web', 'index.html'), 'utf8', (err, file) => res.send(file));
+});
 
 const connection = 'postgres://savelichalex:119911@localhost/fp_teach';
 

@@ -1,11 +1,13 @@
 'use strict';
 
 import React, {Component} from 'react';
-import {EventStream as es} from 'event-streams';
+import es from 'event-streams';
 
 import Avatar from 'material-ui/lib/avatar';
 import ListItem from 'material-ui/lib/lists/list-item';
 import Colors from 'material-ui/lib/styles/colors';
+
+import { history } from '../../Router/Router';
 
 export class ContentItem extends Component {
 
@@ -16,7 +18,8 @@ export class ContentItem extends Component {
 				leftAvatar={
 					<Avatar color={Colors.pinkA100} backgroundColor={Colors.transparent}>{this.props.index}</Avatar>
 					}
-			    onClick={() => es.push(this.props.contents$, this.props.id)}
+			    //onClick={() => es.push(this.props.contents$, this.props.id)}
+			    onClick={() => history.push({pathname:`/lecture/${this.props.id}`})}
 			>
 			</ListItem>
 		);

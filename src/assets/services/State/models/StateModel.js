@@ -1,7 +1,7 @@
 'use strict';
 
 import ajax from 'ajax';
-import {EventStream as es} from 'event-streams';
+import es from 'event-streams';
 
 const LECTURE_TYPE = 1;
 const TASK_TYPE = 2;

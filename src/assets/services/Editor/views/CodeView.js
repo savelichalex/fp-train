@@ -1,7 +1,7 @@
 'use strict';
 
 import React, { Component } from 'react';
-import {EventStream as es} from 'event-streams';
+import es from 'event-streams';
 
 export class CodeView extends Component {
 

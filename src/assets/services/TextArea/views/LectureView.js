@@ -2,12 +2,9 @@
 
 import React, {Component} from 'react';
 import ReactMarkdown from 'react-markdown';
-import { EventStream as es } from 'event-streams';
+import es from 'event-streams';
 
 export class LectureView extends Component {
-
-	componentWillMount() {
-	}
 
 	render() {
 		return (

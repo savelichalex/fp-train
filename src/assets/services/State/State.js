@@ -1,7 +1,7 @@
 'use strict';
 
 import {BaseComponent} from 'base-components';
-import {EventStream as es} from 'event-streams';
+import es from 'event-streams';
 
 import {SIGNALS} from '../../consts/Signals';
 

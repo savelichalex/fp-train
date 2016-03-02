@@ -1,6 +1,7 @@
 var path = require('path');
 
 module.exports = {
+	devtool: 'source-map',
 	entry: './src/assets/app.js',
 	output: {
 		path: path.join(__dirname, 'src', 'static', 'js'),
@@ -12,8 +13,7 @@ module.exports = {
 				test: /\.js/,
 				loader: 'babel',
 				include: [
-					path.resolve(__dirname, 'src', 'assets'),
-					path.resolve(__dirname, '../eventStream')
+					path.resolve(__dirname, 'src', 'assets')
 				]
 			},
 			{

@@ -1,9 +1,7 @@
 'use strict';
 
-require('longjohn');
-
 import {BaseComponent} from 'base-components';
-import {EventStream as es} from 'event-streams';
+import es from 'event-streams';
 import pg from 'pg';
 import express from 'express';
 import fs from 'fs';
@@ -15,7 +13,7 @@ app.use(express.static(__dirname + '/static'));
 
 app.get('/', (req, res) => fs.readFile(__dirname + path.sep + path.join('web', 'index.html'), 'utf8', (err, file) => res.send(file)));
 
-const connection = 'postgres://savelichalex:119911@localhost/fp_train';
+const connection = 'postgres://savelichalex:119911@localhost/fp_teach';
 
 const SIGNALS = {
 	GET_CONTENTS: 'getContents',
@@ -182,21 +180,21 @@ class Article extends BaseComponent {
 				Article.getDataFromDb(id),
 				Article.getDataFromFile(id)
 			),
-			([{examples, next_id, previous_id}, text]) => {
+			([{examples, nextId, previousId}, text]) => {
 				const data = {};
 				if(examples) {
 					Object.assign(data, {
 						examples
 					});
 				}
-				if(next_id) {
+				if(nextId) {
 					Object.assign(data, {
-						nextId: next_id
+						nextId: nextId
 					});
 				}
-				if(previous_id) {
+				if(previousId) {
 					Object.assign(data, {
-						previousId: previous_id
+						previousId: previousId
 					});
 				}
 				if(text) {
@@ -360,4 +358,4 @@ new Contents();
 new Article();
 new Task();
 
-app.listen(3000);
+app.listen(3000, () => console.log('Listen in 3000'));

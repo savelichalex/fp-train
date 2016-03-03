@@ -11,21 +11,10 @@ import path from 'path';
 const app = express();
 
 app.use(cookieSession({
-	keys: ['key']
+	keys: [ 'key' ]
 }));
 
 app.use(express.static(__dirname + '/static'));
-
-app.get('*', (req, res, next) => {
-	if(req.url !== '/signin' && !req.session.authorized) {
-		res.redirect('/signin');
-		return;
-	}
-	if(/^\/api\//.test(req.url)) {
-		return next();
-	}
-	fs.readFile(__dirname + path.sep + path.join('web', 'index.html'), 'utf8', (err, file) => res.send(file));
-});
 
 const connection = 'postgres://savelichalex:119911@localhost/fp_teach';
 
@@ -69,11 +58,87 @@ class App extends BaseComponent {
 			}
 		);
 
+		const index$ = App.indexStream();
+
+		const authSuccess$ =
+			      es.filter(
+				      index$,
+				      ({req}) => req.session.authorized
+			      );
+
+		const api$ =
+			      es.filter(
+				      authSuccess$,
+				      ({req}) => /^\/api\//.test(req.url)
+			      );
+
+		const notApi$ =
+			      es.filter(
+				      authSuccess$,
+				      ({req}) => !/^\/api\//.test(req.url)
+			      );
+
+		es.subscribe(
+			api$,
+			({next}) => next()
+		);
+
+		const authFailed$ =
+			      es.filter(
+				      index$,
+				      ({req}) => !req.session.authorized
+			      );
+
+		const signin$ =
+			      es.filter(
+				      authFailed$,
+				      ({req}) => req.url === '/signin'
+			      );
+
+		const notSignin$ =
+			      es.filter(
+				      authFailed$,
+				      ({req}) => req.url !== '/signin'
+			      );
+
+		es.subscribe(
+			notSignin$,
+			({res}) => res.redirect('/signin')
+		);
+
+		es.subscribe(
+			es.flatMap(
+				es.merge(
+					notApi$,
+					signin$
+				),
+				App.getIndex
+			),
+			({res, file}) => res.send(file)
+		);
+
 		return {
 			[ SIGNALS.GET_CONTENTS ]: App.contentsStream(),
 			[ SIGNALS.GET_ARTICLE ]: App.articleStream(),
 			[ SIGNALS.GET_TASK ]: App.taskStream()
 		};
+	}
+
+	static indexStream() {
+		const index$ = es.EventStream();
+
+		app.get('*', (req, res, next) => {
+			es.push(
+				index$,
+				{
+					req,
+					res,
+					next
+				}
+			);
+		});
+
+		return index$
 	}
 
 	static contentsStream() {
@@ -119,6 +184,21 @@ class App extends BaseComponent {
 
 		return tasks$;
 	}
+
+	static getIndex({req, res}) {
+		const file$ = es.EventStream();
+
+		fs.readFile(__dirname + path.sep + path.join('web', 'index.html'), 'utf8', (err, file) => es.push(
+			file$,
+			{
+				req,
+				res,
+				file
+			}
+		));
+
+		return file$;
+	}
 }
 
 class Contents extends BaseComponent {
@@ -130,10 +210,10 @@ class Contents extends BaseComponent {
 
 	main(contents$) {
 		const contentsData$ =
-			es.flatMap(
-				contents$,
-				Contents.getData
-			);
+			      es.flatMap(
+				      contents$,
+				      Contents.getData
+			      );
 
 		return {
 			[ SIGNALS.SEND_CONTENTS ]: contentsData$
@@ -178,10 +258,10 @@ class Article extends BaseComponent {
 
 	main(articles$) {
 		const articleMainData$ =
-			es.flatMap(
-				articles$,
-				Article.getData
-			);
+			      es.flatMap(
+				      articles$,
+				      Article.getData
+			      );
 
 		return {
 			[ SIGNALS.SEND_ARTICLE ]: articleMainData$
@@ -232,7 +312,7 @@ class Article extends BaseComponent {
 			if(err) {
 				es.throwError(fromDb$, err);
 			} else {
-				client.query('SELECT * FROM articles WHERE id=$1::int', [id], (err, result) => {
+				client.query('SELECT * FROM articles WHERE id=$1::int', [ id ], (err, result) => {
 					done();
 
 					if(err) {
@@ -240,7 +320,7 @@ class Article extends BaseComponent {
 					} else {
 						es.push(
 							fromDb$,
-							result.rows[0]
+							result.rows[ 0 ]
 						);
 					}
 				});
@@ -277,10 +357,10 @@ class Task extends BaseComponent {
 
 	main(tasks$) {
 		const taskData$ =
-			es.flatMap(
-				tasks$,
-				Task.getData
-			);
+			      es.flatMap(
+				      tasks$,
+				      Task.getData
+			      );
 
 		return {
 			[ SIGNALS.SEND_TASK ]: taskData$
@@ -331,7 +411,7 @@ class Task extends BaseComponent {
 			if(err) {
 				es.throwError(fromDb$, err);
 			} else {
-				client.query('SELECT * FROM tasks WHERE $1::int', [id], (err, result) => {
+				client.query('SELECT * FROM tasks WHERE $1::int', [ id ], (err, result) => {
 					done();
 
 					if(err) {
@@ -339,7 +419,7 @@ class Task extends BaseComponent {
 					} else {
 						es.push(
 							fromDb$,
-							result.rows[0]
+							result.rows[ 0 ]
 						);
 					}
 				});

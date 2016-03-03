@@ -4,14 +4,23 @@ import {BaseComponent} from 'base-components';
 import es from 'event-streams';
 import pg from 'pg';
 import express from 'express';
+import cookieSession from 'cookie-session';
 import fs from 'fs';
 import path from 'path';
 
 const app = express();
 
+app.use(cookieSession({
+	keys: ['key']
+}));
+
 app.use(express.static(__dirname + '/static'));
 
 app.get('*', (req, res, next) => {
+	if(req.url !== '/signin' && !req.session.authorized) {
+		res.redirect('/signin');
+		return;
+	}
 	if(/^\/api\//.test(req.url)) {
 		return next();
 	}

@@ -1,5 +1,11 @@
-# Test lecture
+# First part of lecture
 
-### I'm write this text for testing markdown rendering by React
+Lorem ipsum
+;;;
+# Second part of lecture
 
-[Test link](#first-anchor)
+Lorem ipsum
+;;;
+# Third part of lecture
+
+lorem ipsum

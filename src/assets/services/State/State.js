@@ -82,37 +82,6 @@ export class State extends BaseComponent {
 		);
 	}
 
-	static getAfterAuth2(userData$) {
-		const userState$ =
-			      es.map(
-				      userData$,
-				      StateModel.getUserState
-			      );
-
-		const lectures$ =
-			      es.map(
-				      es.filter(
-					      userState$,
-					      StateModel.isLectureType
-				      ),
-				      ({id}) => StateModel.getLecture(id)
-			      );
-
-		const tasks$ =
-			      es.map(
-				      es.filter(
-					      userState$,
-					      StateModel.isTaskType
-				      ),
-				      ({id}) => StateModel.getTask(id)
-			      );
-
-		return {
-			lectures$,
-			tasks$
-		};
-	}
-
 	static nextStep(lectureComplete$, taskComplete$) {
 		const nextStep$ =
 			      es.map(

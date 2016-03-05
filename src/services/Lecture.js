@@ -1,11 +1,12 @@
 'use strict';
 
-import { BaseComponent } from 'base-components';
+import {BaseComponent} from 'base-components';
 import es from 'event-streams';
 import pg from 'pg';
 import fs from 'fs';
+import path from 'path';
 
-import { SIGNALS, connection } from '../index';
+import {SIGNALS, connection} from '../index';
 
 export class Lecture extends BaseComponent {
 	slots() {
@@ -27,31 +28,40 @@ export class Lecture extends BaseComponent {
 	}
 
 	static getData({id, res}) {
+		const lectureFromDb$ = Lecture.getDataFromDb(id);
+
 		return es.map(
 			es.zip(
-				Lecture.getDataFromDb(id),
-				Lecture.getDataFromFile(id)
+				lectureFromDb$,
+				es.map(
+					es.zip(
+						es.flatMap(
+							lectureFromDb$,
+							Lecture.getLecture
+						),
+						es.flatMap(
+							lectureFromDb$,
+							Lecture.getExamples
+						)
+					),
+					Lecture.zipLectureData
+				)
 			),
-			([{examples, nextId, previousId}, text]) => {
+			([{next_id, previous_id}, lecture]) => {
 				const data = {};
-				if(examples) {
-					Object.assign(data, {
-						examples
-					});
-				}
-				if(nextId) {
+				if(next_id) {
 					Object.assign(data, {
 						nextId: nextId
 					});
 				}
-				if(previousId) {
+				if(previous_id) {
 					Object.assign(data, {
-						previousId: previousId
+						previousId: previous_id
 					});
 				}
-				if(text) {
+				if(lecture) {
 					Object.assign(data, {
-						text
+						lecture
 					});
 				}
 
@@ -60,7 +70,7 @@ export class Lecture extends BaseComponent {
 					res
 				};
 			}
-		)
+		);
 	}
 
 	static getDataFromDb(id) {
@@ -70,7 +80,7 @@ export class Lecture extends BaseComponent {
 			if(err) {
 				es.throwError(fromDb$, err);
 			} else {
-				client.query('SELECT * FROM articles WHERE id=$1::int', [ id ], (err, result) => {
+				client.query('SELECT * FROM lectures WHERE id=$1::int', [id], (err, result) => {
 					done();
 
 					if(err) {
@@ -78,7 +88,7 @@ export class Lecture extends BaseComponent {
 					} else {
 						es.push(
 							fromDb$,
-							result.rows[ 0 ]
+							result.rows[0]
 						);
 					}
 				});
@@ -88,10 +98,10 @@ export class Lecture extends BaseComponent {
 		return fromDb$;
 	}
 
-	static getDataFromFile(id) {
+	static getLecture({lecture_file}) {
 		const fromFile$ = es.EventStream();
 
-		fs.readFile(__dirname + '/../static/markdown/lecture' + id + '.md', 'utf8', (err, file) => {
+		fs.readFile(path.resolve(__dirname, `../static/markdown/${lecture_file.trim()}`), 'utf8', (err, file) => {
 			if(err) {
 				es.throwError(fromFile$, err);
 			} else {
@@ -103,5 +113,36 @@ export class Lecture extends BaseComponent {
 		});
 
 		return fromFile$;
+	}
+
+	static getExamples({examples_file}) {
+		const fromFile$ = es.EventStream();
+
+		fs.readFile(path.resolve(__dirname, `../static/markdown/${examples_file.trim()}`), 'utf8', (err, file) => {
+			if(err) {
+				es.throwError(fromFile$, err);
+			} else {
+				es.push(
+					fromFile$,
+					file
+				);
+			}
+		});
+
+		return fromFile$;
+	}
+
+	static zipLectureData([lecture, examples]) {
+		const lectureParts = lecture.split(';;;');
+		const examplesParts = examples.split(';;;');
+
+		return lectureParts.reduce((prev, cur, index) => {
+			const exPart = examplesParts[index];
+			prev.push({
+				text: cur,
+				example: exPart
+			});
+			return prev;
+		}, []);
 	}
 }

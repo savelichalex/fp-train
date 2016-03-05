@@ -19,3 +19,4 @@ new Contents();
 new Router();
 
 require('./styles/app.styl');
+require('codemirror/lib/codemirror.css');

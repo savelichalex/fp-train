@@ -30,6 +30,7 @@
   },
   "dependencies": {
     "ajax": "0.0.4",
+    "body-parser": "^1.15.0",
     "cookie-session": "^2.0.0-alpha.1",
     "event-streams": "^0.2.1",
     "express": "^4.13.4",
@@ -38,6 +39,7 @@
     "json-loader": "^0.5.4",
     "material-design-lite": "^1.1.1",
     "material-ui": "^0.14.4",
+    "md5": "^2.0.0",
     "normalize-styl": "^3.0.3",
     "pg": "^4.5.1",
     "react": "^0.14.7",

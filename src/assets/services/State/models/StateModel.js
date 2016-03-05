@@ -8,26 +8,35 @@ const TASK_TYPE = 2;
 
 export class StateModel {
 
-	static checkAuthorizedData({username, password}) {
-		if(username === '123' && password === '123') {
-			return {
-				status: true,
-				userData: {
-					username: username,
-					currentStep: {
-						id: 1,
-						type: 1
+	static checkAuthorizedData(data) {
+		const auth$ = es.EventStream();
+
+		ajax.postJSON('/api/signin', data, (err, {id, username, password}) => {
+			if(id) {
+				es.push(
+					auth$,
+					{
+						status: true,
+						userData: {
+							username
+						}
 					}
-				}
+				);
+			} else {
+				es.push(
+					auth$,
+					{
+						status: false,
+						errorCode: {
+							username,
+							password
+						}
+					}
+				)
 			}
-		}
-		return {
-			status: false,
-			errorCode: {
-				username: true,
-				password: true
-			}
-		};
+		});
+
+		return auth$;
 	}
 
 	static getUserState({currentStep}) {
@@ -49,7 +58,7 @@ export class StateModel {
 	static getLecture(id) {
 		const lecture$ = es.EventStream();
 
-		ajax.get('/api/article/' + id, {}, data => {
+		ajax.get('/api/lecture/' + id, {}, data => {
 			es.push(lecture$, data);
 		});
 

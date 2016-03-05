@@ -21,7 +21,7 @@ export class State extends BaseComponent {
 
 	main(auth$, getContents$, chooseLecture$) {
 		const contents$ = State.getAfterAuth(getContents$);
-		const {authFailed$, userData$} = State.auth(auth$);
+		const {authFailed$, authSuccess$} = State.auth(auth$);
 
 		const lectures$ =
 			      es.flatMap(
@@ -31,7 +31,7 @@ export class State extends BaseComponent {
 
 		return {
 			[ SIGNALS.AUTH_FAILED ]: authFailed$,
-			[ SIGNALS.AUTH_SUCCESS ]: userData$,
+			[ SIGNALS.AUTH_SUCCESS ]: authSuccess$,
 			[ SIGNALS.SHOW_LECTURE ]: lectures$,
 			[ SIGNALS.SHOW_CONTENTS ]: contents$
 		};
@@ -39,9 +39,9 @@ export class State extends BaseComponent {
 
 	static auth(auth$) {
 		const isAuth$ =
-			      es.map(
+			      es.flatMap(
 				      auth$,
-				      data => StateModel.checkAuthorizedData(data)
+				      StateModel.checkAuthorizedData
 			      );
 
 		const authFailed$ =
@@ -53,7 +53,7 @@ export class State extends BaseComponent {
 				      val => val.errorCode
 			      );
 
-		const userData$ =
+		const authSuccess$ =
 			      es.map(
 				      es.filter(
 					      isAuth$,
@@ -63,7 +63,7 @@ export class State extends BaseComponent {
 			      );
 
 		es.subscribe(
-			userData$,
+			authSuccess$,
 			() => history.push({
 				pathname: '/'
 			})
@@ -71,7 +71,7 @@ export class State extends BaseComponent {
 
 		return {
 			authFailed$,
-			userData$
+			authSuccess$
 		};
 	}
 

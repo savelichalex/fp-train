@@ -3,8 +3,15 @@
 import React, {Component} from 'react';
 import ReactMarkdown from 'react-markdown';
 import CodeMirror from 'react-codemirror';
+import RaisedButton from 'material-ui/lib/raised-button';
+import AppBar from 'material-ui/lib/app-bar';
+import IconButton from 'material-ui/lib/icon-button';
+import List from 'material-ui/lib/svg-icons/action/list';
+import Colors from 'material-ui/lib/styles/colors';
 require('codemirror/mode/clojure/clojure');
 import es from 'event-streams';
+
+import {history} from '../../Router/Router';
 
 export class LectureView extends Component {
 
@@ -16,28 +23,38 @@ export class LectureView extends Component {
 		};
 		return (
 			<div>
+				<AppBar
+					title={this.props.header}
+					iconElementLeft={
+				        <IconButton onClick={() => history.push({pathname:'/'})}>
+				            <List />
+				        </IconButton>
+				    }
+				/>
 				<div className="text-area">
-					<ReactMarkdown source={this.props.data.text} />
+					<ReactMarkdown source={this.props.data.text}/>
 					{(() => {
 						if(this.props.first) {
-							return <button
+							return <RaisedButton
+								backgroundColor={Colors.lightGreenA100}
 								onClick={() => this.onNext()}
-							>Previous</button>
+							>Previous</RaisedButton>
 						} else {
-							return <button
+							return <RaisedButton
 								onClick={() => this.onNext()}
-							>Previous part</button>
+							>Previous part</RaisedButton>
 						}
 					})()}
 					{(() => {
 						if(this.props.last) {
-							return <button
+							return <RaisedButton
+								backgroundColor={Colors.lightGreenA100}
 								onClick={() => this.onPrevious()}
-							>Next</button>
+							>Next</RaisedButton>
 						} else {
-							return <button
+							return <RaisedButton
 								onClick={() => this.onPrevious()}
-							>Next part</button>
+							>Next part</RaisedButton>
 						}
 					})()}
 				</div>

@@ -47,7 +47,7 @@ export class Lecture extends BaseComponent {
 					Lecture.zipLectureData
 				)
 			),
-			([{next_id, previous_id}, lecture]) => {
+			([{next_id, previous_id, header}, lecture]) => {
 				const data = {};
 				if(next_id) {
 					Object.assign(data, {
@@ -62,6 +62,11 @@ export class Lecture extends BaseComponent {
 				if(lecture) {
 					Object.assign(data, {
 						lecture
+					});
+				}
+				if(header) {
+					Object.assign(data, {
+						header
 					});
 				}
 
@@ -80,7 +85,7 @@ export class Lecture extends BaseComponent {
 			if(err) {
 				es.throwError(fromDb$, err);
 			} else {
-				client.query('SELECT * FROM lectures WHERE id=$1::int', [id], (err, result) => {
+				client.query('SELECT * FROM lectures, contents WHERE lectures.id=$1::int AND contents.id=$1::int', [id], (err, result) => {
 					done();
 
 					if(err) {

@@ -40,7 +40,7 @@ export class TextArea extends BaseComponent {
 		}
 	}
 
-	static renderLecture({lecture, nextId, previousId}) {
+	static renderLecture({header, lecture, nextId, previousId}) {
 		let wrapper = document.getElementById('lecture');
 		if(!wrapper) {
 			wrapper = ReactDOM.render(
@@ -52,9 +52,10 @@ export class TextArea extends BaseComponent {
 		const nextPart$ = es.EventStream();
 		const lectureLength = lecture.length - 1;
 
-		function lectureLoop(data, previous$, next$, first, last, index) {
+		function lectureLoop(header, data, previous$, next$, first, last, index) {
 			ReactDOM.render(
 				<LectureView
+					header={header}
 					data={data}
 					previous$={previous$}
 					next$={next$}
@@ -65,15 +66,15 @@ export class TextArea extends BaseComponent {
 				wrapper
 			);
 		}
-		lectureLoop(lecture[0], previousPart$, nextPart$, true, false, 0);
+		lectureLoop(header, lecture[0], previousPart$, nextPart$, true, false, 0);
 
 		es.subscribe(
 			previousPart$,
 			index => {
 				if(index === 0) {
-					lectureLoop(lecture[index], previousPart$, nextPart$, true, false, index);
+					lectureLoop(header, lecture[index], previousPart$, nextPart$, true, false, index);
 				} else if(index > 0) {
-					lectureLoop(lecture[index], previousPart$, nextPart$, false, false, index);
+					lectureLoop(header, lecture[index], previousPart$, nextPart$, false, false, index);
 				}
 			}
 		);
@@ -82,9 +83,9 @@ export class TextArea extends BaseComponent {
 			nextPart$,
 			index => {
 				if(index === lectureLength) {
-					lectureLoop(lecture[index], previousPart$, nextPart$, false, true, index);
+					lectureLoop(header, lecture[index], previousPart$, nextPart$, false, true, index);
 				} else if(index < lectureLength) {
-					lectureLoop(lecture[index], previousPart$, nextPart$, false, false, index);
+					lectureLoop(header, lecture[index], previousPart$, nextPart$, false, false, index);
 				}
 			}
 		);

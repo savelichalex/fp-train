@@ -13,26 +13,19 @@ import {LectureView} from './views/LectureView';
 
 const container = <div id="lecture"></div>;
 
-export class TextArea extends BaseComponent {
+export class Lecture extends BaseComponent {
 
 	slots() {
 		return [
-			SIGNALS.SHOW_LECTURE,
-			SIGNALS.SHOW_TASK
+			SIGNALS.SHOW_LECTURE
 		];
 	}
 
-	main(lectures$, tasks$) {
+	main(lectures$) {
 		const chooseLecture$ =
 			es.flatMap(
 				lectures$,
-				TextArea.renderLecture
-			);
-
-		const chooseTask$ =
-			es.map(
-				tasks$,
-				TextArea.renderTask
+				Lecture.renderLecture
 			);
 
 		return {
@@ -112,10 +105,6 @@ export class TextArea extends BaseComponent {
 				() => nextId
 			)
 		);
-	}
-
-	static renderTask(data) {
-
 	}
 
 }

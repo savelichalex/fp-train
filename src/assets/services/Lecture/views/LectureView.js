@@ -8,7 +8,6 @@ import AppBar from 'material-ui/lib/app-bar';
 import IconButton from 'material-ui/lib/icon-button';
 import List from 'material-ui/lib/svg-icons/action/list';
 import Colors from 'material-ui/lib/styles/colors';
-require('codemirror/mode/clojure/clojure');
 import es from 'event-streams';
 
 import {history} from '../../Router/Router';

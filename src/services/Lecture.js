@@ -51,7 +51,7 @@ export class Lecture extends BaseComponent {
 				const data = {};
 				if(next_id) {
 					Object.assign(data, {
-						nextId: nextId
+						nextId: next_id
 					});
 				}
 				if(previous_id) {

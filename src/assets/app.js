@@ -9,7 +9,7 @@ import { Router } from './services/Router/Router';
 import { Auth } from './services/Auth/Auth';
 import { Contents } from './services/Contents/Contents';
 import { Lecture } from './services/Lecture/Lecture';
-import { Editor } from './services/Editor/Editor';
+import { Task } from './services/Task/Task';
 
 require('codemirror/mode/clojure/clojure');
 
@@ -18,7 +18,7 @@ new Router();
 new Auth();
 new Contents();
 new Lecture();
-// new Editor();
+new Task();
 
 require('./styles/app.styl');
 require('codemirror/lib/codemirror.css');

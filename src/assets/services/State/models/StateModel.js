@@ -43,11 +43,11 @@ export class StateModel {
 		return currentStep;
 	}
 
-	static isLectureType({type}) {
+	static isLectureType(type) {
 		return type === LECTURE_TYPE;
 	}
 
-	static isTaskType({type}) {
+	static isTaskType(type) {
 		return type === TASK_TYPE;
 	}
 
@@ -58,7 +58,7 @@ export class StateModel {
 	static getLecture(id) {
 		const lecture$ = es.EventStream();
 
-		ajax.get('/api/lecture/' + id, {}, data => {
+		ajax.get(`/api/lecture/${id}`, {}, data => {
 			es.push(lecture$, data);
 		});
 
@@ -66,7 +66,16 @@ export class StateModel {
 	}
 
 	static getTask(id) {
+		const task$ = es.EventStream();
 
+		ajax.get(`/api/task/${id}`, {}, data => {
+			es.push(
+				task$,
+				data
+			);
+		});
+
+		return task$;
 	}
 
 	static getNextStep(id) {

@@ -26,6 +26,7 @@ export class Router extends BaseComponent {
 	static get routes() {
 		return [
 			/^\/lecture\/(\d+)/, SIGNALS.CHOOSE_LECTURE,
+			/^\/task\/(\d+)/, SIGNALS.CHOOSE_TASK,
 			/^\/signin/, SIGNALS.SHOW_AUTH,
 			/^\/$/, SIGNALS.GET_CONTENTS,
 			/^\//, SIGNALS.NOT_FOUND

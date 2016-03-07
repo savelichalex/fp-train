@@ -2,10 +2,10 @@
 
 import { BaseComponent } from 'base-components';
 import es from 'event-streams';
-import pg from 'pg';
-import fs from 'fs';
+import path from 'path';
+import { fromFile, selectOneFromDb } from '../util/util';
 
-import { SIGNALS, connection } from '../index';
+import { SIGNALS } from '../index';
 
 export class Task extends BaseComponent {
 	slots() {
@@ -27,21 +27,33 @@ export class Task extends BaseComponent {
 	}
 
 	static getData({id, res}) {
+		const taskFromDb$ = Task.getDataFromDb(id);
+
 		return es.map(
 			es.zip(
-				Task.getDataFromDb(id),
-				Task.getDataFromFile(id)
+				taskFromDb$,
+				es.zip(
+					es.flatMap(
+						taskFromDb$,
+						Task.getTaskDescription
+					),
+					es.zip(
+						es.flatMap(
+							taskFromDb$,
+							Task.getTaskBlank
+						),
+						es.flatMap(
+							taskFromDb$,
+							Task.getTaskTest
+						)
+					)
+				)
 			),
-			([{tasks, next_id, previous_id}], text) => {
+			([{next_id, previous_id, header}, [description, [blank, test]]]) => {
 				const data = {};
-				if(tasks) {
-					Object.assign(data, {
-						tasks
-					});
-				}
 				if(next_id) {
 					Object.assign(data, {
-						nextId: next_id
+						nextId: nextId
 					});
 				}
 				if(previous_id) {
@@ -49,59 +61,38 @@ export class Task extends BaseComponent {
 						previousId: previous_id
 					});
 				}
-				if(text) {
+				if(header) {
 					Object.assign(data, {
-						text
+						header
 					});
 				}
+				Object.assign(data, {
+					description,
+					blank,
+					test
+				});
 
 				return {
 					data,
 					res
 				};
 			}
-		)
+		);
 	}
 
 	static getDataFromDb(id) {
-		const fromDb$ = es.EventStream();
-
-		pg.connect(connection, (err, client, done) => {
-			if(err) {
-				es.throwError(fromDb$, err);
-			} else {
-				client.query('SELECT * FROM tasks WHERE $1::int', [ id ], (err, result) => {
-					done();
-
-					if(err) {
-						es.throwError(fromDb$, err);
-					} else {
-						es.push(
-							fromDb$,
-							result.rows[ 0 ]
-						);
-					}
-				});
-			}
-		});
-
-		return fromDb$;
+		return selectOneFromDb('SELECT * FROM tasks, contents WHERE tasks.id=$1::int AND contents.id=$1::int', [ id ]);
 	}
 
-	static getDataFromFile(id) {
-		const fromFile$ = es.EventStream();
+	static getTaskDescription({description_file}) {
+		return fromFile(path.resolve(__dirname, `../static/markdown/${description_file.trim()}`));
+	}
 
-		fs.readFile('./static/markdown/task' + id + '.md', 'utf8', (err, file) => {
-			if(err) {
-				es.throwError(fromFile$, err);
-			} else {
-				es.push(
-					fromFile$,
-					file
-				);
-			}
-		});
+	static getTaskBlank({blank_file}) {
+		return fromFile(path.resolve(__dirname, `../static/code/${blank_file.trim()}`));
+	}
 
-		return fromFile$;
+	static getTaskTest({test_file}) {
+		return fromFile(path.resolve(__dirname, `../static/code/${test_file.trim()}`));
 	}
 }

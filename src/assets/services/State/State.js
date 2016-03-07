@@ -15,25 +15,33 @@ export class State extends BaseComponent {
 		return [
 			SIGNALS.CHECK_AUTH,
 			SIGNALS.GET_CONTENTS,
-			SIGNALS.CHOOSE_LECTURE
+			SIGNALS.CHOOSE_LECTURE,
+			SIGNALS.CHOOSE_TASK
 		];
 	}
 
-	main(auth$, getContents$, chooseLecture$) {
+	main(auth$, getContents$, chooseLecture$, chooseTask$) {
 		const contents$ = State.getAfterAuth(getContents$);
 		const {authFailed$, authSuccess$} = State.auth(auth$);
 
 		const lectures$ =
-			      es.flatMap(
-				      chooseLecture$,
-				      StateModel.getLecture
-			      );
+			es.flatMap(
+				chooseLecture$,
+				StateModel.getLecture
+			);
+
+		const tasks$ =
+			es.flatMap(
+				chooseTask$,
+				StateModel.getTask
+			);
 
 		return {
 			[ SIGNALS.AUTH_FAILED ]: authFailed$,
 			[ SIGNALS.AUTH_SUCCESS ]: authSuccess$,
+			[ SIGNALS.SHOW_CONTENTS ]: contents$,
 			[ SIGNALS.SHOW_LECTURE ]: lectures$,
-			[ SIGNALS.SHOW_CONTENTS ]: contents$
+			[ SIGNALS.SHOW_TASK ]: tasks$
 		};
 	}
 
@@ -80,30 +88,5 @@ export class State extends BaseComponent {
 			userData$,
 			StateModel.getContents
 		);
-	}
-
-	static nextStep(lectureComplete$, taskComplete$) {
-		const nextStep$ =
-			      es.map(
-				      es.merge(lectureComplete$, taskComplete$),
-				      StateModel.getNextStep
-			      );
-
-		const showNextLecture$ =
-			      es.filter(
-				      nextStep$,
-				      StateModel.isLectureType
-			      );
-
-		const showNextTask$ =
-			      es.filter(
-				      nextStep$,
-				      StateModel.isTaskType
-			      );
-
-		return {
-			showNextLecture$,
-			showNextTask$
-		};
 	}
 }

@@ -9,10 +9,7 @@ import ReactDOM from 'react-dom';
 import {SIGNALS} from '../../consts/Signals';
 
 //views
-
 import {ContentsList} from './views/ContentsList';
-
-const container = <div id="contents"></div>;
 
 export class Contents extends BaseComponent {
 	slots() {
@@ -22,33 +19,18 @@ export class Contents extends BaseComponent {
 	}
 
 	main(contents$) {
-		const contentsView$ =
-			es.flatMap(
-				contents$,
-				Contents.renderContents
-			);
+		es.subscribe(
+			contents$,
+			Contents.renderContents
+		);
 
-		return {
-			[ SIGNALS.CHOOSE_LECTURE ]: contentsView$
-		};
+		return {};
 	}
 
 	static renderContents(data) {
-		let wrapper = document.getElementById('contents');
-		if(!wrapper) {
-			wrapper = ReactDOM.render(
-				container,
-				document.getElementById('main')
-			);
-		}
-
-		const contents$ = es.EventStream();
-
 		ReactDOM.render(
-			<ContentsList data={data} contents$={contents$} />,
+			<ContentsList data={data} />,
 			document.getElementById('main')
 		);
-
-		return contents$;
 	}
 }

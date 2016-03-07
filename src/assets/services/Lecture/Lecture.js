@@ -11,8 +11,6 @@ import {SIGNALS} from '../../consts/Signals';
 //views
 import {LectureView} from './views/LectureView';
 
-const container = <div id="lecture"></div>;
-
 export class Lecture extends BaseComponent {
 
 	slots() {
@@ -34,13 +32,6 @@ export class Lecture extends BaseComponent {
 	}
 
 	static renderLecture({header, lecture, nextId, previousId}) {
-		let wrapper = document.getElementById('lecture');
-		if(!wrapper) {
-			wrapper = ReactDOM.render(
-				container,
-				document.getElementById('main')
-			);
-		}
 		const previousPart$ = es.EventStream();
 		const nextPart$ = es.EventStream();
 		const lectureLength = lecture.length - 1;
@@ -56,7 +47,7 @@ export class Lecture extends BaseComponent {
 					last={last}
 					index={index}
 				/>,
-				wrapper
+				document.getElementById('main')
 			);
 		}
 		lectureLoop(header, lecture[0], previousPart$, nextPart$, true, false, 0);

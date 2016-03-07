@@ -7,11 +7,9 @@ export const SIGNALS = {
 	AUTH_SUCCESS: 'authSuccess',
 	SHOW_LECTURE: 'showLecture',
 	CHOOSE_LECTURE: 'chooseLecture',
-	COMPLETE_LECTURE: 'completeLecture',
 	SHOW_TASK: 'showTask',
-	COMPLETE_TASK: 'completeTask',
 	CHECK_TASK: 'checkTask',
-	CHECK_CODE: 'checkCode',
+	CHOOSE_TASK: 'chooseTask',
 	GET_CONTENTS: 'getContents',
 	SHOW_CONTENTS: 'showContents',
 	NOT_FOUND: 'notFound'

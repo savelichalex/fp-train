@@ -32,7 +32,11 @@ export class TaskView extends Component {
 				    iconElementRight={
 				        <RaisedButton
 								backgroundColor={Colors.lightGreenA100}
-								onClick={() => es.push(this.props.check$, this.refs.code.getCodeMirror().getTextArea().value)}
+								onClick={() =>
+									!this.refs.code.getCodeMirror().save() &&
+									es.push(
+										this.props.check$,
+										this.refs.code.getCodeMirror().getTextArea().value)}
 							>Check</RaisedButton>
 				    }
 				/>

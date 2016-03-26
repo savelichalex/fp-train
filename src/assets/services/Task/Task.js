@@ -26,7 +26,8 @@ export class Task extends BaseComponent {
 			);
 
 		return {
-		}
+			[SIGNALS.CHECK_TASK]: codeCheck$
+		};
 	}
 
 	static renderTask(data) {

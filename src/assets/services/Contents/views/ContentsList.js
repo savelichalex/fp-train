@@ -12,9 +12,13 @@ export class ContentsList extends Component {
 		);
 
 		return (
-			<List>
-				{data}
-			</List>
+			<div className="contents">
+				<div className="contents__wrapper">
+					<List style={{paddingTop: 0, paddingBottom: 0}}>
+						{data}
+					</List>
+				</div>
+			</div>
 		);
 	}
 

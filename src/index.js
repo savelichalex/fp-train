@@ -1,7 +1,5 @@
 'use strict';
 
-require('longjohn');
-
 import {BaseComponent} from 'base-components';
 import es from 'event-streams';
 import pg from 'pg';
@@ -10,6 +8,17 @@ import cookieSession from 'cookie-session';
 import bodyParser from 'body-parser';
 import fs from 'fs';
 import path from 'path';
+
+//config
+import MainConfig from './config/main';
+import LocalConfig from './config/main-local';
+
+const Config = Object.keys(MainConfig).reduce((acc, key) => {
+	acc[key] = Object.assign({}, MainConfig[key], LocalConfig[key]);
+	return acc;
+}, {});
+
+export const connection = `postgres://${Config.db.username}:${Config.db.password}@${Config.db.host}/${Config.db.db_name}`;
 
 //services
 import { Auth } from './services/Auth';
@@ -25,8 +34,6 @@ app.use(cookieSession({
 }));
 
 app.use(express.static(__dirname + '/static'));
-
-export const connection = 'postgres://savelichalex:119911@localhost/fp_teach';
 
 export const SIGNALS = {
 	CHECK_SIGNIN: 'signin',

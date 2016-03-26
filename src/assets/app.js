@@ -14,11 +14,11 @@ import { Task } from './services/Task/Task';
 require('codemirror/mode/clojure/clojure');
 
 new State();
-new Router();
 new Auth();
 new Contents();
 new Lecture();
 new Task();
+new Router();
 
 require('./styles/app.styl');
 require('codemirror/lib/codemirror.css');

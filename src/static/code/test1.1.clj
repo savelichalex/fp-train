@@ -1,1 +1,1 @@
-(assert = (test) "Hello world")
+(assert = (test "world") "Hello world" [])

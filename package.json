@@ -37,16 +37,17 @@
     "history": "^2.0.0",
     "jeet": "^6.1.2",
     "json-loader": "^0.5.4",
+    "lisp-on-js": "savelichalex/lisp-interpreter",
     "material-design-lite": "^1.1.1",
     "material-ui": "^0.14.4",
     "md5": "^2.0.0",
     "normalize-styl": "^3.0.3",
     "pg": "^4.5.1",
+    "raw-loader": "^0.5.1",
     "react": "^0.14.7",
     "react-codemirror": "^0.2.5",
     "react-dom": "^0.14.7",
     "react-markdown": "^2.0.1",
-    "react-tap-event-plugin": "^0.2.2",
-    "lisp-on-js": "savelichalex/lisp-interpreter"
+    "react-tap-event-plugin": "^0.2.2"
   }
 }

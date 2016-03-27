@@ -7,6 +7,10 @@ import {setupEnvironment} from 'lisp-on-js/core';
 
 import {SIGNALS} from '../../consts/Signals';
 
+import assert from './clj/assert.clj';
+
+import { toJs } from 'mori';
+
 export class Interpreter extends BaseComponent {
 	slots() {
 		return [
@@ -26,6 +30,6 @@ export class Interpreter extends BaseComponent {
 	}
 	
 	static runCode(code) {
-		return interpretate(code, setupEnvironment());
+		return toJs(interpretate(assert + '\n\n' + code, setupEnvironment()));
 	}
 }

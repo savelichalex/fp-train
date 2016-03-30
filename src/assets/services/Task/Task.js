@@ -32,6 +32,7 @@ export class Task extends BaseComponent {
 
 	static renderTask(data) {
 		const check$ = es.EventStream();
+		console.log(data);
 
 		ReactDOM.render(
 			<TaskView

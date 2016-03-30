@@ -21,7 +21,7 @@ export class Interpreter extends BaseComponent {
 	main(checkTask$) {
 		es.subscribe(
 			checkTask$,
-			code => console.log(Interpreter.runCode(code))
+			({code, test}) => console.log(Interpreter.runCode(code, test))
 		);
 
 		return {
@@ -29,7 +29,7 @@ export class Interpreter extends BaseComponent {
 		};
 	}
 	
-	static runCode(code) {
-		return toJs(interpretate(assert + '\n\n' + code, setupEnvironment()));
+	static runCode(code, tests) {
+		return toJs(interpretate(assert + '\n\n' + code + '\n\n' + tests, setupEnvironment()));
 	}
 }

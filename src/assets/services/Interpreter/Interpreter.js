@@ -9,7 +9,10 @@ import {SIGNALS} from '../../consts/Signals';
 
 import assert from './clj/assert.clj';
 
-import { toJs } from 'mori';
+import {toJs} from 'mori';
+
+const SUCCESS = 'success';
+const ERROR = 'error';
 
 export class Interpreter extends BaseComponent {
 	slots() {
@@ -19,17 +22,48 @@ export class Interpreter extends BaseComponent {
 	}
 
 	main(checkTask$) {
-		es.subscribe(
-			checkTask$,
-			({code, test}) => console.log(Interpreter.runCode(code, test))
-		);
+		const afterRun$ =
+			es.flatMap(
+				checkTask$,
+				Interpreter.runCode
+			);
+
+		const success$ =
+			es.filter(
+				afterRun$,
+				results => results.filter(([,status]) => status === ERROR).length === 0
+			);
+
+		const error$ =
+			es.filter(
+				afterRun$,
+				results => results.filter(([,status]) => status === ERROR).length !== 0
+			);
 
 		return {
-
+			[SIGNALS.TASK_TEST_SUCCESS]: success$,
+			[SIGNALS.TASK_TEST_ERROR]: error$
 		};
 	}
-	
-	static runCode(code, tests) {
-		return toJs(interpretate(assert + '\n\n' + code + '\n\n' + tests, setupEnvironment()));
+
+	static runCode({code, test}) {
+		const interpretated$ = es.EventStream();
+
+		setTimeout(() => {
+			try {
+				es.push(
+					interpretated$,
+					toJs(interpretate(assert + '\n\n' + code + '\n\n' + test, setupEnvironment()))
+						.map(arr => [arr[0].value, arr[1].value])
+				);
+			} catch (e) {
+				es.push(
+					interpretated$,
+					[e, ERROR]
+				);
+			}
+		}, 0);
+
+		return interpretated$;
 	}
 }

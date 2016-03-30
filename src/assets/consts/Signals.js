@@ -9,6 +9,8 @@ export const SIGNALS = {
 	CHOOSE_LECTURE: 'chooseLecture',
 	SHOW_TASK: 'showTask',
 	CHECK_TASK: 'checkTask',
+	TASK_TEST_SUCCESS: 'taskTestSuccess',
+	TASK_TEST_ERROR: 'taskTestError',
 	CHOOSE_TASK: 'chooseTask',
 	GET_CONTENTS: 'getContents',
 	SHOW_CONTENTS: 'showContents',

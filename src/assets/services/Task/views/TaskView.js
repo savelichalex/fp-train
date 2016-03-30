@@ -1,6 +1,6 @@
 'use strict';
 
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import es from 'event-streams';
 
 import ReactMarkdown from 'react-markdown';
@@ -20,34 +20,46 @@ export class TaskView extends Component {
 			mode: 'clojure',
 			lineNumbers: true
 		};
+		const {
+			data: {
+				header,
+				description,
+				blank,
+				test
+			},
+			check$
+		} = this.props;
 		return (
 			<div>
 				<AppBar
-					title={this.props.data.header}
+					title={header}
 					iconElementLeft={
 				        <IconButton onClick={() => history.push({pathname:'/'})}>
 				            <List />
 				        </IconButton>
 				    }
-				    iconElementRight={
+					iconElementRight={
 				        <RaisedButton
 								backgroundColor={Colors.lightGreenA100}
 								onClick={() =>
 									!this.refs.code.getCodeMirror().save() &&
 									es.push(
-										this.props.check$,
-										this.refs.code.getCodeMirror().getTextArea().value)}
+										check$,
+										{
+											test,
+											code: this.refs.code.getCodeMirror().getTextArea().value
+										})}
 							>Check</RaisedButton>
 				    }
 				/>
 				<div className="text-area">
-					<ReactMarkdown source={this.props.data.description}/>
+					<ReactMarkdown source={description}/>
 				</div>
 				<div className="editor-area">
 					<CodeMirror
-						value={this.props.data.blank}
+						value={blank}
 						options={editorOpts}
-					    ref="code"
+						ref="code"
 					/>
 				</div>
 			</div>

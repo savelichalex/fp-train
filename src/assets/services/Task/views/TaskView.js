@@ -13,6 +13,8 @@ import Colors from 'material-ui/lib/styles/colors';
 
 import {history} from '../../Router/Router';
 
+import {ErrorView} from './TaskErrorView';
+
 export class TaskView extends Component {
 
 	render() {
@@ -25,10 +27,16 @@ export class TaskView extends Component {
 				header,
 				description,
 				blank,
-				test
+				test,
+				nextId
 			},
+			error,
+			success,
 			check$
 		} = this.props;
+		const errorBlock = error ?
+			<ErrorView error={error} /> :
+			void 0;
 		return (
 			<div>
 				<AppBar
@@ -39,17 +47,7 @@ export class TaskView extends Component {
 				        </IconButton>
 				    }
 					iconElementRight={
-				        <RaisedButton
-								backgroundColor={Colors.lightGreenA100}
-								onClick={() =>
-									!this.refs.code.getCodeMirror().save() &&
-									es.push(
-										check$,
-										{
-											test,
-											code: this.refs.code.getCodeMirror().getTextArea().value
-										})}
-							>Check</RaisedButton>
+				        this.renderCheckButton(error, success, test, nextId, check$)
 				    }
 				/>
 				<div className="text-area">
@@ -62,8 +60,37 @@ export class TaskView extends Component {
 						ref="code"
 					/>
 				</div>
+				{errorBlock}
 			</div>
 		)
+	}
+
+	renderCheckButton(error, success, test, nextId, check$) {
+		return !error && !success ?
+			<RaisedButton backgroundColor={Colors.lightGreenA100}
+			              onClick={() => this.checkCode(test, check$)}>
+				Check
+			</RaisedButton> :
+			error ?
+				<RaisedButton backgroundColor={Colors.redA100}
+				              onClick={() => this.checkCode(test, check$)}>
+					Try again
+				</RaisedButton> :
+				<RaisedButton backgroundColor={Colors.lightGreenA100}
+				              onClick={() => history.push({pathname:`/${nextId || ''}`})}>
+					{nextId !== void 0 ? 'Next' : 'Done'}
+				</RaisedButton>;
+	}
+
+	checkCode(test, check$) {
+		this.refs.code.getCodeMirror().save();
+		es.push(
+			check$,
+			{
+				test,
+				code: this.refs.code.getCodeMirror().getTextArea().value
+			}
+		);
 	}
 
 }

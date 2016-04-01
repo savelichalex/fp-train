@@ -16,6 +16,12 @@ import {history} from '../../Router/Router';
 import {ErrorView} from './TaskErrorView';
 
 export class TaskView extends Component {
+	constructor() {
+		super();
+		this.state = {
+			editorValue: ''
+		};
+	}
 
 	render() {
 		const editorOpts = {
@@ -57,7 +63,7 @@ export class TaskView extends Component {
 				</div>
 				<div className={editorAreaClass}>
 					<CodeMirror
-						value={blank}
+						value={this.state.editorValue || blank}
 						options={editorOpts}
 						ref="code"
 					/>
@@ -86,13 +92,17 @@ export class TaskView extends Component {
 
 	checkCode(test, check$) {
 		this.refs.code.getCodeMirror().save();
+		const value = this.refs.code.getCodeMirror().getTextArea().value;
 		es.push(
 			check$,
 			{
 				test,
-				code: this.refs.code.getCodeMirror().getTextArea().value
+				code: value
 			}
 		);
+		this.setState({
+			editorValue: value
+		});
 	}
 
 }

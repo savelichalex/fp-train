@@ -38,8 +38,9 @@ export class TaskView extends Component {
 			<ErrorView error={error} /> :
 			void 0;
 		return (
-			<div>
+			<div style={{height: '100%'}}>
 				<AppBar
+					className="app-bar"
 					title={header}
 					iconElementLeft={
 				        <IconButton onClick={() => history.push({pathname:'/'})}>
@@ -57,12 +58,13 @@ export class TaskView extends Component {
 					<CodeMirror
 						value={blank}
 						options={editorOpts}
+						style={{height: error ? '50%' : '100%'}}
 						ref="code"
 					/>
+					{errorBlock}
 				</div>
-				{errorBlock}
 			</div>
-		)
+		);
 	}
 
 	renderCheckButton(error, success, test, nextId, check$) {

@@ -2,36 +2,59 @@
 @import '../../../node_modules/normalize-styl/index.styl'
 
 main-bgcolor = #EEEEEE
+app-bar-height = 4.5rem
+error-color = rgb(255, 138, 128)
 
 body
-	margin: 0
-	height: 100%
+  margin: 0
+  height: 100%
 
 #main
-	background-color: main-bgcolor
-	min-height: 100%
+  background-color: main-bgcolor
+  min-height: 100%
+  height: 1px
 
 .contents
-	padding: 2rem
+  padding: 2rem
 
 .contents__wrapper
-	center(600px)
-	box-shadow: 0 0 0.1rem rgba(0, 0, 0, .1)
+  center(600px)
+  box-shadow: 0 0 0.1rem rgba(0, 0, 0, .1)
+
+.app-bar
+  height: app-bar-height
 
 #main .text-area
-	width: 50%
-	float: left
+  width: 50%
+  height: "calc(100% - %s)" % app-bar-height
+  float: left
 
 #main .editor-area
-	width: 50%
-	float: left
+  width: 50%
+  height: "calc(100% - %s)" % app-bar-height
+  float: left
+
+#main .editor-error
+  height: "calc(50% - %s)" % app-bar-height
+  overflow-x: none
+  overflow-y: scroll
+  border: 0.8rem solid error-color
+  padding: 0.5rem 1rem
+  background-color: white
+
+#main .editor-error-header
+  width: 100%
+  border-bottom: 1px solid grey
+  font-weight: 600
+  margin-bottom:
+    0.8rem
 
 #auth
-	center(300px)
+  center(300px)
 
 .contents__item
-	color: #cccccc
+  color: #cccccc
 
-	&:hover
-		color: #000
-		cursor: pointer
+  &:hover
+    color: #000
+    cursor: pointer

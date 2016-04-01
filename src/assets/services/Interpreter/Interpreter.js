@@ -31,13 +31,13 @@ export class Interpreter extends BaseComponent {
 		const success$ =
 			es.filter(
 				afterRun$,
-				results => results.filter(([,status]) => status === ERROR).length === 0
+				results => results.filter(arg => arg[1] === ERROR).length === 0
 			);
 
 		const error$ =
 			es.filter(
 				afterRun$,
-				results => results.filter(([,status]) => status === ERROR).length !== 0
+				results => results.filter(arg => arg[1] === ERROR).length !== 0
 			);
 
 		return {
@@ -59,7 +59,7 @@ export class Interpreter extends BaseComponent {
 			} catch (e) {
 				es.push(
 					interpretated$,
-					[e, ERROR]
+					[[e, ERROR]]
 				);
 			}
 		}, 0);

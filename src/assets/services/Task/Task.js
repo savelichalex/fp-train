@@ -28,30 +28,59 @@ export class Task extends BaseComponent {
 			);
 
 		es.subscribe(
-			testSuccess$,
-			([status, mes]) => console.log(status, mes)
+			Task.withLast(
+				testSuccess$,
+				tasks$
+			),
+			([, task]) => Task.renderTaskOnSuccess(task)
 		);
 
-		es.subscribe(
-			testErrors$,
-			([status, mes]) => console.warn(status, mes)
-		);
+		const codeCheckAfterError$ =
+			es.flatMap(
+				Task.withLast(
+					testErrors$,
+					tasks$
+				),
+				([errors, task]) => Task.renderTask(task, errors)
+			);
 
 		return {
-			[SIGNALS.CHECK_TASK]: codeCheck$
+			[SIGNALS.CHECK_TASK]: es.merge(codeCheck$, codeCheckAfterError$)
 		};
 	}
 
-	static renderTask(data) {
+	static renderTask(data, error) {
 		const check$ = es.EventStream();
 
 		ReactDOM.render(
 			<TaskView
 				data={data}
-				check$={check$} />,
+				check$={check$}
+				error={error} />,
 			document.getElementById('main')
 		);
 
 		return check$;
+	}
+
+	static renderTaskOnSuccess(data) {
+		ReactDOM.render(
+			<TaskView
+				data={data}
+				success={true} />,
+			document.getElementById('main')
+		);
+	}
+	
+	static withLast(stream1, stream2) {
+		es.subscribe(
+			stream2,
+			data => stream2._prev = data
+		);
+
+		return es.map(
+			stream1,
+			data => [data, stream2._prev]
+		);
 	}
 }

@@ -37,6 +37,7 @@ export class TaskView extends Component {
 		const errorBlock = error ?
 			<ErrorView error={error} /> :
 			void 0;
+		const editorAreaClass = `editor-area${ error ? ' editor-area__error' : ''}`;
 		return (
 			<div style={{height: '100%'}}>
 				<AppBar
@@ -54,11 +55,10 @@ export class TaskView extends Component {
 				<div className="text-area">
 					<ReactMarkdown source={description}/>
 				</div>
-				<div className="editor-area">
+				<div className={editorAreaClass}>
 					<CodeMirror
 						value={blank}
 						options={editorOpts}
-						style={{height: error ? '50%' : '100%'}}
 						ref="code"
 					/>
 					{errorBlock}

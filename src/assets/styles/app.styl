@@ -34,12 +34,23 @@ body
   height: "calc(100% - %s)" % app-bar-height
   float: left
 
+  .ReactCodeMirror
+    height: 100% !important
+
+  .CodeMirror
+    height: 100% !important
+
+  &.editor-area__error
+    .ReactCodeMirror
+      height: 55% !important
+
 #main .editor-error
-  height: "calc(50% - %s)" % app-bar-height
   overflow-x: none
   overflow-y: scroll
   border: 0.8rem solid error-color
   padding: 0.5rem 1rem
+  height: 45%
+  box-sizing: border-box
   background-color: white
 
 #main .editor-error-header

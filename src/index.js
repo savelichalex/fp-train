@@ -44,7 +44,9 @@ export const SIGNALS = {
 	GET_LECTURE: 'getLecture',
 	SEND_LECTURE: 'sendLecture',
 	GET_TASK: 'getTask',
-	SEND_TASK: 'sendTask'
+	SEND_TASK: 'sendTask',
+	DONE_TASK: 'doneTask',
+	SAVE_DONE_TASK: 'saveDoneTask'
 };
 
 class App extends BaseComponent {
@@ -53,12 +55,13 @@ class App extends BaseComponent {
 			SIGNALS.SEND_CONTENTS,
 			SIGNALS.SEND_LECTURE,
 			SIGNALS.SEND_TASK,
+			SIGNALS.SAVE_DONE_TASK,
 			SIGNALS.SIGNIN_SUCCESS,
 			SIGNALS.SIGNIN_FAILED
 		];
 	}
 
-	main(contents$, articles$, tasks$, signinSuccess$, signinFailed$) {
+	main(contents$, articles$, tasks$, saveDoneTask$, signinSuccess$, signinFailed$) {
 		es.subscribe(
 			contents$,
 			({data, res}) => {
@@ -77,6 +80,14 @@ class App extends BaseComponent {
 			tasks$,
 			({data, res}) => {
 				res.json(data);
+			}
+		);
+
+		es.subscribe(
+			saveDoneTask$,
+			({status, mes, res}) => {
+				res.status(status);
+				res.send(mes);
 			}
 		);
 
@@ -143,7 +154,7 @@ class App extends BaseComponent {
 			signinSuccess$,
 			({data, req, res}) => {
 				req.session.authorized = true;
-				req.session.username = data.username;
+				req.session.id = data.id;
 				res.json(data);
 			}
 		);
@@ -157,6 +168,7 @@ class App extends BaseComponent {
 			[ SIGNALS.GET_CONTENTS ]: App.contentsStream(),
 			[ SIGNALS.GET_LECTURE ]: App.articleStream(),
 			[ SIGNALS.GET_TASK ]: App.taskStream(),
+			[ SIGNALS.DONE_TASK ]: App.taskDoneStream(),
 			[ SIGNALS.CHECK_SIGNIN ]: App.signinStream()
 		};
 	}
@@ -233,6 +245,22 @@ class App extends BaseComponent {
 			}
 		));
 
+		return tasks$;
+	}
+
+	static taskDoneStream() {
+		const tasks$ = es.EventStream();
+
+		app.post('/api/task_done/:id(\\d+)/', (req, res) => es.push(
+			tasks$,
+			{
+				task_id: req.params.id,
+				user_id: req.session.id,
+				req,
+				res
+			}
+		));
+		
 		return tasks$;
 	}
 

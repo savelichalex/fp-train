@@ -3,26 +3,34 @@
 import { BaseComponent } from 'base-components';
 import es from 'event-streams';
 import path from 'path';
-import { fromFile, selectOneFromDb } from '../util/util';
+import { fromFile, selectOneFromDb, insertOneToDb, checkIsExistInDb } from '../util/util';
 
 import { SIGNALS } from '../index';
 
 export class Task extends BaseComponent {
 	slots() {
 		return [
-			SIGNALS.GET_TASK
+			SIGNALS.GET_TASK,
+			SIGNALS.DONE_TASK
 		];
 	}
 
-	main(tasks$) {
+	main(tasks$, doneTasks$) {
 		const taskData$ =
 			es.flatMap(
 				tasks$,
 				Task.getData
 			);
 
+		const saveTaskDone$ =
+			es.flatMap(
+				doneTasks$,
+				Task.saveTaskCompletion
+			);
+
 		return {
-			[ SIGNALS.SEND_TASK ]: taskData$
+			[ SIGNALS.SEND_TASK ]: taskData$,
+			[ SIGNALS.SAVE_DONE_TASK ]: saveTaskDone$
 		};
 	}
 
@@ -53,7 +61,7 @@ export class Task extends BaseComponent {
 				const data = {};
 				if(next_id) {
 					Object.assign(data, {
-						nextId: nextId
+						nextId: next_id
 					});
 				}
 				if(previous_id) {
@@ -94,5 +102,40 @@ export class Task extends BaseComponent {
 
 	static getTaskTest({test_file}) {
 		return fromFile(path.resolve(__dirname, `../static/code/${test_file.trim()}`));
+	}
+
+	static saveTaskCompletion({user_id, task_id, res}) {
+		const check$ = checkIsExistInDb('SELECT * FROM tasks_completed WHERE user_id=$1 AND task_id=$2', [user_id, task_id]);
+
+		const save$ =
+			es.map(
+				es.flatMap(
+					es.filter(
+						check$,
+						isExist => !isExist
+					),
+					insertOneToDb('INSERT INTO tasks_completed (user_id, task_id) VALUES ($1, $2)', [user_id, task_id])
+				),
+				() => ({
+					status: 200,
+					message: 'Ok',
+					res
+				})
+			);
+
+		const exist$ =
+			es.map(
+				es.filter(
+					check$,
+					isExist => isExist
+				),
+				() => ({
+					status: 422,
+					message: 'Task is competed yet',
+					res
+				})
+			);
+		
+		return es.merge(save$, exist$);
 	}
 }

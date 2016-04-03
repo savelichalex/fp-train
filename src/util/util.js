@@ -46,3 +46,32 @@ export function selectOneFromDb(query, args) {
 
 	return fromDb$;
 }
+
+export function insertOneToDb(query, args) {
+	return selectOneFromDb(query, args);
+}
+
+export function checkIsExistInDb(query, args) {
+	const check$ = es.EventStream();
+	
+	pg.connect(connection, (err, client, done) => {
+		if(err) {
+			es.throwError(check$, err);
+		} else {
+			client.query(query, args, (err, result) => {
+				done();
+
+				if(err) {
+					es.throwError(check$, err);
+				} else {
+					es.push(
+						check$,
+						result.rows.length > 0
+					);
+				}
+			});
+		}
+	});
+	
+	return check$;
+}

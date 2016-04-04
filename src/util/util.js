@@ -47,6 +47,31 @@ export function selectOneFromDb(query, args) {
 	return fromDb$;
 }
 
+export function selectManyFromDb(query, args) {
+	const fromDb$ = es.EventStream();
+
+	pg.connect(connection, (err, client, done) => {
+		if(err) {
+			es.throwError(fromDb$, err);
+		} else {
+			client.query(query, args, (err, result) => {
+				done();
+
+				if(err) {
+					es.throwError(fromDb$, err);
+				} else {
+					es.push(
+						fromDb$,
+						result.rows
+					);
+				}
+			});
+		}
+	});
+
+	return fromDb$;
+}
+
 export function insertOneToDb(query, args) {
 	return selectOneFromDb(query, args);
 }

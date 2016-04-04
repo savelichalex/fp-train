@@ -91,4 +91,14 @@ export class StateModel {
 
 		return contents$;
 	}
+
+	static saveTaskDone(currentId) {
+		const result$ = es.EventStream();
+
+		ajax.post(`/api/task_done/${currentId}`, {}, res => {
+			es.push(result$, res);
+		});
+
+		return result$;
+	}
 }

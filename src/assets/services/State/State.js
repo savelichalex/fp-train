@@ -16,13 +16,19 @@ export class State extends BaseComponent {
 			SIGNALS.CHECK_AUTH,
 			SIGNALS.GET_CONTENTS,
 			SIGNALS.CHOOSE_LECTURE,
-			SIGNALS.CHOOSE_TASK
+			SIGNALS.CHOOSE_TASK,
+			SIGNALS.DONE_TASK
 		];
 	}
 
-	main(auth$, getContents$, chooseLecture$, chooseTask$) {
+	main(auth$, getContents$, chooseLecture$, chooseTask$, doneTask$) {
 		const contents$ = State.getAfterAuth(getContents$);
 		const {authFailed$, authSuccess$} = State.auth(auth$);
+		
+		es.subscribe(
+			doneTask$,
+			State.doneTask
+		);
 
 		const lectures$ =
 			es.flatMap(
@@ -87,6 +93,22 @@ export class State extends BaseComponent {
 		return es.flatMap(
 			userData$,
 			StateModel.getContents
+		);
+	}
+	
+	static doneTask({currentId, nextId}) {
+		const result$ = StateModel.saveTaskDone(currentId);
+		
+		es.subscribe(
+			result$,
+			res => {
+				if(res === 'Ok') {
+					//TODO: save it to contents list
+				} else {
+					//TODO: correct error handling
+				}
+				history.push({pathname: `/${nextId || ''}`});
+			}
 		);
 	}
 }

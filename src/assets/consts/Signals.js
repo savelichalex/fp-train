@@ -11,6 +11,7 @@ export const SIGNALS = {
 	CHECK_TASK: 'checkTask',
 	TASK_TEST_SUCCESS: 'taskTestSuccess',
 	TASK_TEST_ERROR: 'taskTestError',
+	DONE_TASK: 'doneTask',
 	CHOOSE_TASK: 'chooseTask',
 	GET_CONTENTS: 'getContents',
 	SHOW_CONTENTS: 'showContents',

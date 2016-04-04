@@ -85,9 +85,9 @@ class App extends BaseComponent {
 
 		es.subscribe(
 			saveDoneTask$,
-			({status, mes, res}) => {
+			({status, message, res}) => {
 				res.status(status);
-				res.send(mes);
+				res.send(message);
 			}
 		);
 

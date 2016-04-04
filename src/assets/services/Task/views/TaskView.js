@@ -38,7 +38,8 @@ export class TaskView extends Component {
 			},
 			error,
 			success,
-			check$
+			check$,
+			done$
 		} = this.props;
 		const errorBlock = error ?
 			<ErrorView error={error} /> :
@@ -55,7 +56,7 @@ export class TaskView extends Component {
 				        </IconButton>
 				    }
 					iconElementRight={
-				        this.renderCheckButton(error, success, test, nextId, check$)
+				        this.renderCheckButton(error, success, test, nextId, check$, done$)
 				    }
 				/>
 				<div className="text-area">
@@ -73,7 +74,7 @@ export class TaskView extends Component {
 		);
 	}
 
-	renderCheckButton(error, success, test, nextId, check$) {
+	renderCheckButton(error, success, test, nextId, check$, done$) {
 		return !error && !success ?
 			<RaisedButton backgroundColor={Colors.lightGreenA100}
 			              onClick={() => this.checkCode(test, check$)}>
@@ -85,7 +86,7 @@ export class TaskView extends Component {
 					Try again
 				</RaisedButton> :
 				<RaisedButton backgroundColor={Colors.lightGreenA100}
-				              onClick={() => history.push({pathname:`/${nextId || ''}`})}>
+				              onClick={() => es.push(done$, {nextId, currentId: /\/task\/(\d+)\/?/.exec(window.location.pathname)[1]})}>
 					{nextId !== void 0 ? 'Next' : 'Done'}
 				</RaisedButton>;
 	}

@@ -114,7 +114,7 @@ export class Task extends BaseComponent {
 						check$,
 						isExist => !isExist
 					),
-					insertOneToDb('INSERT INTO tasks_completed (user_id, task_id) VALUES ($1, $2)', [user_id, task_id])
+					() => insertOneToDb('INSERT INTO tasks_completed (user_id, task_id) VALUES ($1, $2)', [user_id, task_id])
 				),
 				() => ({
 					status: 200,
@@ -131,7 +131,7 @@ export class Task extends BaseComponent {
 				),
 				() => ({
 					status: 422,
-					message: 'Task is competed yet',
+					message: 'Task is completed yet',
 					res
 				})
 			);

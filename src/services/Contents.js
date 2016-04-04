@@ -4,7 +4,12 @@ import { BaseComponent } from 'base-components';
 import es from 'event-streams';
 import pg from 'pg';
 
-import { SIGNALS, connection } from '../index';
+import { selectManyFromDb } from '../util/util';
+
+import { SIGNALS } from '../index';
+
+const LECTURE_TYPE = 1;
+const TASK_TYPE = 2;
 
 export class Contents extends BaseComponent {
 	slots() {
@@ -26,30 +31,33 @@ export class Contents extends BaseComponent {
 	}
 
 	static getData({res}) {
-		const data$ = es.EventStream();
-
-		pg.connect(connection, (err, client, done) => {
-			if(err) {
-				es.throwError(data$, err);
-			} else {
-				client.query('SELECT * FROM contents', (err, result) => {
-					done();
-
-					if(err) {
-						es.throwError(data$, err);
+		const contents$ =
+			selectManyFromDb(
+				'SELECT * FROM contents LEFT JOIN tasks_completed ON contents.id = tasks_completed.task_id ORDER BY contents.id');
+		
+		return es.map(
+			es.map(
+				contents$,
+				c => c.map(({id, index, header, type, user_id, task_id}) => {
+					const item = {
+						id,
+						index,
+						header,
+						type
+					};
+					if(type === TASK_TYPE) {
+						return Object.assign(item, {
+							completed: user_id !== null && task_id !== null
+						});
 					} else {
-						es.push(
-							data$,
-							{
-								data: result.rows,
-								res
-							}
-						);
+						return item;
 					}
-				});
-			}
-		});
-
-		return data$;
+				})
+			),
+			data => ({
+				data,
+				res
+			})
+		);
 	}
 }

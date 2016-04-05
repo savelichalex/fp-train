@@ -107,7 +107,7 @@ export class State extends BaseComponent {
 				} else {
 					//TODO: correct error handling
 				}
-				history.push({pathname: `/${nextId || ''}`});
+				history.push({pathname: `/${nextId ? `task/${nextId}` : ''}`});
 			}
 		);
 	}

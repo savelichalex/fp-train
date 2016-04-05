@@ -8,5 +8,7 @@ CREATE TABLE tasks_completed (user_id INTEGER, task_id INTEGER);
 INSERT INTO users (login, password) VALUES ('admin', '202cb962ac59075b964b07152d234b70');
 INSERT INTO contents (index, header, type) VALUES ('1', 'First lecture', 1);
 INSERT INTO contents (index, header, type) VALUES ('1.1', 'Task for first lecture', 2);
+INSERT INTO contents (index, header, type) VALUES ('1.2', 'Second task for first lecture', 2);
 INSERT INTO lectures (id, lecture_file, examples_file, next_id) VALUES (1, 'lecture1.md', 'examples1.clj', 2);
-INSERT INTO tasks (id, description_file, blank_file, test_file, previous_id) VALUES (2, 'task1.1.md', 'blank1.1.clj', 'test1.1.clj', 1);
+INSERT INTO tasks (id, description_file, blank_file, test_file, next_id, previous_id) VALUES (3, 'task1.1.md', 'blank1.1.clj', 'test1.1.clj', 3, 1);
+INSERT INTO tasks (id, description_file, blank_file, test_file, previous_id) VALUES (3, 'task1.2.md', 'blank1.2.clj', 'test1.2.clj', 2);

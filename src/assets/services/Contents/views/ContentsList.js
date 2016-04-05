@@ -8,7 +8,7 @@ export class ContentsList extends Component {
 
 	render() {
 		const data = this.props.data.map(
-			({index, header, id, type}, key) => <ContentItem key={key} header={header} index={index} id={id} type={type} />
+			(data, key) => <ContentItem key={key} {...data} />
 		);
 
 		return (

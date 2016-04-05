@@ -86,10 +86,24 @@ export class StateModel {
 		const contents$ = es.EventStream();
 
 		ajax.get('/api/contents', {}, data => {
-			es.push(contents$, data);
+			es.push(contents$, StateModel.parseContents(data));
 		});
 
 		return contents$;
+	}
+
+	static parseContents(data) {
+		const lastCompletedIndex = Math.max.apply(null, data.map(({completed}, index) => !!completed && index));
+		const firstTaskAfterLastCompletedIndex =
+			Math.min.apply(
+				null, data.slice(lastCompletedIndex + 1).map(({type}, index) => type === TASK_TYPE && index)) + lastCompletedIndex + 1;
+		return data.map((d, index) => {
+			if(index > firstTaskAfterLastCompletedIndex) {
+				return Object.assign({}, d, {disabled: true});
+			} else {
+				return Object.assign({}, d, {disabled: false});
+			}
+		});
 	}
 
 	static saveTaskDone(currentId) {

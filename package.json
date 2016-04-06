@@ -41,7 +41,6 @@
     "lisp-on-js": "savelichalex/lisp-interpreter",
     "material-design-lite": "^1.1.1",
     "material-ui": "^0.14.4",
-    "md5": "^2.0.0",
     "normalize-styl": "^3.0.3",
     "pg": "^4.5.1",
     "raw-loader": "^0.5.1",

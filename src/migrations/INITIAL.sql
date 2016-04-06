@@ -1,6 +1,6 @@
 CREATE SEQUENCE contents_ids;
 CREATE SEQUENCE user_ids;
-CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY DEFAULT NEXTVAL('user_ids'), username CHAR(64) NOT NULL, password CHAR(32) NOT NULL);
+CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY DEFAULT NEXTVAL('user_ids'), username CHAR(64) NOT NULL, password CHAR(60) NOT NULL);
 CREATE TABLE IF NOT EXISTS contents (id INTEGER PRIMARY KEY DEFAULT NEXTVAL('contents_ids'), index CHAR(4), header CHAR(255) NOT NULL, type SMALLINT NOT NULL);
 CREATE TABLE IF NOT EXISTS lectures (id INTEGER PRIMARY KEY, lecture_file CHAR(32) NOT NULL, examples_file CHAR(32) NOT NULL, next_id INTEGER, previous_id INTEGER);
 CREATE TABLE IF NOT EXISTS tasks (id INTEGER PRIMARY KEY, description_file CHAR(32) NOT NULL, blank_file CHAR(32) NOT NULL, test_file CHAR(32) NOT NULL, next_id INTEGER, previous_id INTEGER);
@@ -10,7 +10,7 @@ TRUNCATE TABLE contents;
 TRUNCATE TABLE lectures;
 TRUNCATE TABLE tasks;
 TRUNCATE TABLE tasks_completed;
-INSERT INTO users (username, password) VALUES ('admin', '202cb962ac59075b964b07152d234b70');
+INSERT INTO users (username, password) VALUES ('admin', '$2a$10$Gz7RoNXHupSADSexIS3ivuotVcGx10ocHMNWOEsFLmDSor67bFSpW');
 INSERT INTO contents (index, header, type) VALUES ('1', 'First lecture', 1);
 INSERT INTO contents (index, header, type) VALUES ('1.1', 'Task for first lecture', 2);
 INSERT INTO contents (index, header, type) VALUES ('1.2', 'Second task for first lecture', 2);

@@ -3,7 +3,7 @@
 import {BaseComponent} from 'base-components';
 import es from 'event-streams';
 import pg from 'pg';
-import md5 from 'md5';
+import bcrypt from 'bcrypt';
 
 import {SIGNALS, connection} from '../index';
 
@@ -55,26 +55,43 @@ export class Auth extends BaseComponent {
 		const {username, password} = req.body;
 
 		pg.connect(connection, (err, client, done) => {
-			if(err) {
+			if (err) {
 				es.throwError(fromDb$, err);
 			} else {
 				client.query(
-					'SELECT * FROM users WHERE username=$1 AND password=$2',
-					[username, md5(password)],
+					'SELECT * FROM users WHERE username=$1',
+					[username],
 					(err, result) => {
 						done();
 
-						if(err) {
+						if (err) {
 							es.throwError(fromDb$, err);
 						} else {
-							es.push(
-								fromDb$,
-								{
-									data: result.rows[0],
-									req,
-									res
+							bcrypt.compare(password, result.rows[0].password, (err, r) => {
+								if(err) {
+									es.throwError(fromDb$, err);
+								} else {
+									if(r) {
+										es.push(
+											fromDb$,
+											{
+												data: result.rows[0],
+												req,
+												res
+											}
+										);
+									} else {
+										es.push(
+											fromDb$,
+											{
+												data: void 0,
+												req,
+												res
+											}
+										);
+									}
 								}
-							);
+							});
 						}
 					});
 			}

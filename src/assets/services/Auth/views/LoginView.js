@@ -21,7 +21,7 @@ export class LoginView extends Component {
 				<TextField hintText="Password" type="password" ref="password"></TextField>;
 
 		return (
-			<Card>
+			<Card id="auth">
 				<h2>Log in</h2>
 				{username}
 				{password}

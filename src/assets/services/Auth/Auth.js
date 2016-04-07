@@ -9,17 +9,19 @@ import {SIGNALS} from '../../consts/Signals';
 
 //views
 import {LoginView} from './views/LoginView';
+import { SignupView } from './views/SignupView';
 
 export class Auth extends BaseComponent {
 
 	slots() {
 		return [
 			SIGNALS.SHOW_AUTH,
-			SIGNALS.AUTH_FAILED
+			SIGNALS.AUTH_FAILED,
+			SIGNALS.SHOW_SIGNUP
 		];
 	}
 
-	main(showAuth$, authFailed$) {
+	main(showAuth$, authFailed$, showSignup$) {
 		const showedAuth$ =
 			      es.flatMap(
 				      showAuth$,
@@ -46,5 +48,52 @@ export class Auth extends BaseComponent {
 		);
 
 		return auth$;
+	}
+
+	static renderSignupForm(data = {}) {
+		const send$ = es.EventStream();
+		const validate$ = es.EventStream();
+
+		ReactDOM.render(
+			<SignupView validate$={validate$} send$={send$} data={data} />,
+			document.getElementById('main')
+		);
+
+		es.subscribe(
+			validate$,
+			d => {
+				const data = Auth.validate(d);
+				ReactDOM.render(
+					<SignupView validate$={validate$} send$={send$} data={data} />,
+					document.getElementById('main')
+				);
+			}
+		);
+		
+		return send$;
+	}
+
+	static validate({username, password, firstName, lastName}) {
+		if(username.length < 3) {
+			return {
+				username: 'Too short'
+			};
+		} else if(password.length < 6) {
+			return {
+				password: 'Password length must be at least 6 symbols'
+			};
+		} else if(firstName.length === 0) {
+			return {
+				firstName: 'Should not be empty'
+			};
+		} else if(lastName.length === 0) {
+			return {
+				lastName: 'Should not be empty'
+			};
+		} else {
+			return {
+				validated: true
+			};
+		}
 	}
 }

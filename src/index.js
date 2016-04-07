@@ -127,11 +127,17 @@ class App extends BaseComponent {
 				      authFailed$,
 				      ({req}) => req.url === '/signin'
 			      );
+		
+		const signup$ =
+			es.filter(
+				authFailed$,
+				({req}) => req.url === '/signup'
+			);
 
 		const notSignin$ =
 			      es.filter(
 				      authFailed$,
-				      ({req}) => req.url !== '/signin'
+				      ({req}) => req.url !== '/signin' && req.url !== '/signup'
 			      );
 
 		es.subscribe(
@@ -142,8 +148,11 @@ class App extends BaseComponent {
 		es.subscribe(
 			es.flatMap(
 				es.merge(
-					notApi$,
-					signin$
+					es.merge(
+						notApi$,
+						signin$
+					),
+					signup$
 				),
 				App.getIndex
 			),

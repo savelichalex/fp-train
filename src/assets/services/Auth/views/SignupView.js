@@ -42,11 +42,11 @@ export class SignupView extends Component {
 				<TextField hintText="Last name" type="text" ref="lastName" onChange={validationHandler}></TextField>;
 
 		const captchaBlock =
-			<TextField type="hidden" ref="captcha"></TextField>;
+			<input type="hidden" ref="captcha"></input>;
 
 		const okButton =
 			validated ?
-				<RaisedButton onClick={() => this.sendData()}>OK</RaisedButton> :
+				<RaisedButton onClick={() => this.sendData(send$)}>OK</RaisedButton> :
 				<RaisedButton onClick={() => false} disabled={true}>OK</RaisedButton>;
 
 		return (
@@ -68,7 +68,7 @@ export class SignupView extends Component {
 			password: this.refs.password.getValue(),
 			firstName: this.refs.firstName.getValue(),
 			lastName: this.refs.lastName.getValue(),
-			captcha: this.refs.captcha.getValue()
+			captcha: this.refs.captcha.value
 		};
 	}
 

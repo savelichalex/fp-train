@@ -28,6 +28,12 @@ export class Auth extends BaseComponent {
 				      Auth.renderAuthForm
 			      );
 
+		const showedSignup$ =
+			es.flatMap(
+				showSignup$,
+				Auth.renderSignupForm
+			);
+
 		const authAfterFailed$ =
 			      es.flatMap(
 				      authFailed$,

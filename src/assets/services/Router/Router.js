@@ -28,6 +28,7 @@ export class Router extends BaseComponent {
 			/^\/lecture\/(\d+)/, SIGNALS.CHOOSE_LECTURE,
 			/^\/task\/(\d+)/, SIGNALS.CHOOSE_TASK,
 			/^\/signin/, SIGNALS.SHOW_AUTH,
+			/^\/signup/, SIGNALS.SHOW_SIGNUP,
 			/^\/$/, SIGNALS.GET_CONTENTS,
 			/^\//, SIGNALS.NOT_FOUND
 		];

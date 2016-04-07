@@ -3,6 +3,7 @@
 export const SIGNALS = {
 	CHECK_AUTH: 'checkAuthorize',
 	SHOW_AUTH: 'showAuth',
+	SHOW_SIGNUP: 'showSignup',
 	AUTH_FAILED: 'authFailed',
 	AUTH_SUCCESS: 'authSuccess',
 	SHOW_LECTURE: 'showLecture',

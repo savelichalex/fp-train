@@ -69,10 +69,17 @@ export class Auth extends BaseComponent {
 			validate$,
 			d => {
 				const data = Auth.validate(d);
-				ReactDOM.render(
-					<SignupView validate$={validate$} send$={send$} data={data} />,
-					document.getElementById('main')
-				);
+				if(!data.validated) {
+					ReactDOM.render(
+						<SignupView validate$={validate$} data={data}/>,
+						document.getElementById('main')
+					);
+				} else {
+					es.push(
+						send$,
+						d
+					);
+				}
 			}
 		);
 		
@@ -86,7 +93,7 @@ export class Auth extends BaseComponent {
 			};
 		} else if(password.length < 6) {
 			return {
-				password: 'Password length must be at least 6 symbols'
+				password: 'Password must be at least 6 symbols'
 			};
 		} else if(firstName.length === 0) {
 			return {

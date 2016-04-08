@@ -11,43 +11,40 @@ export class SignupView extends Component {
 
 	render() {
 		const {
-			username,
-			password,
-			firstName,
-			lastName,
-			validated,
-			validate$,
-			send$
+			data: {
+				username,
+				password,
+				firstName,
+				lastName
+			},
+			validate$
 		} = this.props;
-		const validationHandler = () => this.validateData(validate$);
 		const usernameBlock =
 			username ?
-				<TextField hintText="Username" errorText={username} ref="username" onChange={validationHandler}></TextField> :
-				<TextField hintText="Username" ref="username" onChange={validationHandler}></TextField>;
+				<TextField hintText="Username" errorText={username} ref="username" onEnterKeyDown={() => this.validateData(validate$)} /> :
+				<TextField hintText="Username" ref="username" onEnterKeyDown={() => this.validateData(validate$)} />;
 
 		const passwordBlock =
 			password ?
-				<TextField hintText="Password" errorText={password} type="password" ref="password" onChange={validationHandler}></TextField> :
-				<TextField hintText="Password" type="password" ref="password" onChange={validationHandler}></TextField>;
+				<TextField hintText="Password" errorText={password} type="password" ref="password" onEnterKeyDown={() => this.validateData(validate$)} /> :
+				<TextField hintText="Password" type="password" ref="password" onEnterKeyDown={() => this.validateData(validate$)} />;
 
 
 		const firstNameBlock =
 			firstName ?
-				<TextField hintText="First name" errorText={firstName} type="text" ref="firstName" onChange={validationHandler}></TextField> :
-				<TextField hintText="First name" type="text" ref="firstName" onChange={validationHandler}></TextField>;
+				<TextField hintText="First name" errorText={firstName} type="text" ref="firstName" onEnterKeyDown={() => this.validateData(validate$)} /> :
+				<TextField hintText="First name" type="text" ref="firstName" onEnterKeyDown={() => this.validateData(validate$)} />;
 
 		const lastNameBlock =
 			lastName ?
-				<TextField hintText="Last name" errorText={lastName} type="text" ref="lastName" onChange={validationHandler}></TextField> :
-				<TextField hintText="Last name" type="text" ref="lastName" onChange={validationHandler}></TextField>;
+				<TextField hintText="Last name" errorText={lastName} type="text" ref="lastName" onEnterKeyDown={() => this.validateData(validate$)} /> :
+				<TextField hintText="Last name" type="text" ref="lastName" onEnterKeyDown={() => this.validateData(validate$)} />;
 
 		const captchaBlock =
 			<input type="hidden" ref="captcha"></input>;
 
-		const okButton =
-			validated ?
-				<RaisedButton onClick={() => this.sendData(send$)}>OK</RaisedButton> :
-				<RaisedButton onClick={() => false} disabled={true}>OK</RaisedButton>;
+		const okButton = 
+			<RaisedButton onClick={() => this.validateData(validate$)}>OK</RaisedButton>;
 
 		return (
 			<Card id="auth">
@@ -75,9 +72,4 @@ export class SignupView extends Component {
 	validateData(validate$) {
 		es.push(validate$, this.collectData());
 	}
-
-	sendData(send$) {
-		es.push(send$, this.collectData());
-	}
-
 }

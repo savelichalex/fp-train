@@ -6,6 +6,7 @@ import es from 'event-streams';
 import Card from 'material-ui/lib/card/card';
 import TextField from 'material-ui/lib/text-field';
 import RaisedButton from 'material-ui/lib/raised-button';
+import CircularProgress from 'material-ui/lib/circular-progress';
 
 export class SignupView extends Component {
 
@@ -15,7 +16,8 @@ export class SignupView extends Component {
 				username,
 				password,
 				firstName,
-				lastName
+				lastName,
+				validated
 			},
 			validate$
 		} = this.props;
@@ -43,8 +45,10 @@ export class SignupView extends Component {
 		const captchaBlock =
 			<input type="hidden" ref="captcha"></input>;
 
-		const okButton = 
-			<RaisedButton onClick={() => this.validateData(validate$)}>OK</RaisedButton>;
+		const okButton =
+			validated ?
+				<CircularProgress size={0.5}/> :
+				<RaisedButton onClick={() => this.validateData(validate$)}>OK</RaisedButton>;
 
 		return (
 			<Card id="auth">

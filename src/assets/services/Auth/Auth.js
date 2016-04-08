@@ -70,12 +70,11 @@ export class Auth extends BaseComponent {
 			validate$,
 			d => {
 				const data = Auth.validate(d);
-				if(!data.validated) {
-					ReactDOM.render(
-						<SignupView validate$={validate$} data={data}/>,
-						document.getElementById('main')
-					);
-				} else {
+				ReactDOM.render(
+					<SignupView validate$={validate$} data={data}/>,
+					document.getElementById('main')
+				);
+				if(data.validated) {
 					es.push(
 						send$,
 						d

@@ -118,8 +118,8 @@ export class StateModel {
 
 	static sendSignupData(data) {
 		const result$ = es.EventStream();
-
-		ajax.post('/api/signup', data, res => {
+		
+		ajax.postJSON('/api/signup', data, (err, res) => {
 			es.push(result$, res);
 		});
 

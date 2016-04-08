@@ -14,6 +14,7 @@ export class State extends BaseComponent {
 	slots() {
 		return [
 			SIGNALS.CHECK_AUTH,
+			SIGNALS.CHECK_SIGNUP,
 			SIGNALS.GET_CONTENTS,
 			SIGNALS.CHOOSE_LECTURE,
 			SIGNALS.CHOOSE_TASK,
@@ -21,9 +22,10 @@ export class State extends BaseComponent {
 		];
 	}
 
-	main(auth$, getContents$, chooseLecture$, chooseTask$, doneTask$) {
+	main(auth$, signup$, getContents$, chooseLecture$, chooseTask$, doneTask$) {
 		const contents$ = State.getAfterAuth(getContents$);
 		const {authFailed$, authSuccess$} = State.auth(auth$);
+		State.signup(signup$);
 		
 		es.subscribe(
 			doneTask$,
@@ -88,6 +90,23 @@ export class State extends BaseComponent {
 			authSuccess$
 		};
 	}
+	
+	static signup(signup$) {
+		es.subscribe(
+			es.flatMap(
+				signup$,
+				StateModel.sendSignupData
+			),
+			res => {
+				if(res === 'Ok') {
+					history.push({pathname: '/'});
+				} else {
+					history.push({pathname: '/signup'});
+					//TODO: correct error handling
+				}
+			}
+		);
+	}
 
 	static getAfterAuth(userData$) {
 		return es.flatMap(
@@ -104,10 +123,10 @@ export class State extends BaseComponent {
 			res => {
 				if(res === 'Ok') {
 					//TODO: save it to contents list
+					history.push({pathname: `/${nextId ? `task/${nextId}` : ''}`});
 				} else {
 					//TODO: correct error handling
 				}
-				history.push({pathname: `/${nextId ? `task/${nextId}` : ''}`});
 			}
 		);
 	}

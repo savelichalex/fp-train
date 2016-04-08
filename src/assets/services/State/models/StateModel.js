@@ -115,4 +115,14 @@ export class StateModel {
 
 		return result$;
 	}
+
+	static sendSignupData(data) {
+		const result$ = es.EventStream();
+
+		ajax.post('/api/signup', data, res => {
+			es.push(result$, res);
+		});
+
+		return result$;
+	}
 }

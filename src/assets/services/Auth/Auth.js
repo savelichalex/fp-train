@@ -41,7 +41,8 @@ export class Auth extends BaseComponent {
 			      );
 
 		return {
-			[ SIGNALS.CHECK_AUTH ]: es.merge(showedAuth$, authAfterFailed$)
+			[ SIGNALS.CHECK_AUTH ]: es.merge(showedAuth$, authAfterFailed$),
+			[ SIGNALS.CHECK_SIGNUP ]: showedSignup$
 		};
 	}
 

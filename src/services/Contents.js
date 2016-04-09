@@ -30,10 +30,16 @@ export class Contents extends BaseComponent {
 		}
 	}
 
-	static getData({res}) {
+	static getData({userId, res}) {
 		const contents$ =
 			selectManyFromDb(
-				'SELECT * FROM contents LEFT JOIN tasks_completed ON contents.id = tasks_completed.task_id ORDER BY contents.id');
+				`SELECT * FROM contents 
+				LEFT JOIN 
+				(SELECT * FROM tasks_completed WHERE user_id=$1) AS completed 
+				ON contents.id = completed.task_id 
+				ORDER BY contents.id`,
+				[userId]
+			);
 		
 		return es.map(
 			es.map(

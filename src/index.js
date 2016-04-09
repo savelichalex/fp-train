@@ -249,6 +249,7 @@ class App extends BaseComponent {
 		app.get('/api/contents', (req, res) => es.push(
 			contents$,
 			{
+				userId: req.session.id,
 				req,
 				res
 			}

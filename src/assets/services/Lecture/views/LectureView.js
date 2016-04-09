@@ -20,10 +20,39 @@ export class LectureView extends Component {
 			lineNumbers: true,
 			readOnly: true
 		};
+		const {
+			header,
+			data: {
+				text,
+				example
+			},
+			first,
+			last,
+			prevId,
+			nextId
+		} = this.props;
+		const prevButton =
+			first ?
+				(prevId !== void 0 ?
+					<RaisedButton
+						backgroundColor={Colors.lightGreenA100}
+						onClick={() => this.onNext()}>Previous</RaisedButton> :
+					void 0) :
+				<RaisedButton
+					onClick={() => this.onNext()}>Previous part</RaisedButton>;
+		const nextButton =
+			last ?
+				(nextId !== void 0 ?
+					<RaisedButton
+						backgroundColor={Colors.lightGreenA100}
+						onClick={() => this.onPrevious()}>Next</RaisedButton> :
+					void 0) :
+				<RaisedButton
+					onClick={() => this.onPrevious()}>Next part</RaisedButton>;
 		return (
 			<div>
 				<AppBar
-					title={this.props.header}
+					title={header}
 					iconElementLeft={
 				        <IconButton onClick={() => history.push({pathname:'/'})}>
 				            <List />
@@ -31,35 +60,13 @@ export class LectureView extends Component {
 				    }
 				/>
 				<div className="text-area">
-					<ReactMarkdown source={this.props.data.text}/>
-					{(() => {
-						if(this.props.first) {
-							return <RaisedButton
-								backgroundColor={Colors.lightGreenA100}
-								onClick={() => this.onNext()}
-							>Previous</RaisedButton>
-						} else {
-							return <RaisedButton
-								onClick={() => this.onNext()}
-							>Previous part</RaisedButton>
-						}
-					})()}
-					{(() => {
-						if(this.props.last) {
-							return <RaisedButton
-								backgroundColor={Colors.lightGreenA100}
-								onClick={() => this.onPrevious()}
-							>Next</RaisedButton>
-						} else {
-							return <RaisedButton
-								onClick={() => this.onPrevious()}
-							>Next part</RaisedButton>
-						}
-					})()}
+					<ReactMarkdown source={text}/>
+					{prevButton}
+					{nextButton}
 				</div>
 				<div className="editor-area">
 					<CodeMirror
-						value={this.props.data.example.trim()}
+						value={example.trim()}
 						options={codeMirrorOpts}
 					/>
 				</div>

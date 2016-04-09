@@ -18,5 +18,6 @@ export const SIGNALS = {
 	CHOOSE_TASK: 'chooseTask',
 	GET_CONTENTS: 'getContents',
 	SHOW_CONTENTS: 'showContents',
+	CHOOSE_CONTENT: 'chooseContent',
 	NOT_FOUND: 'notFound'
 };

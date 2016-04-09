@@ -17,11 +17,12 @@ export class Auth extends BaseComponent {
 		return [
 			SIGNALS.SHOW_AUTH,
 			SIGNALS.AUTH_FAILED,
-			SIGNALS.SHOW_SIGNUP
+			SIGNALS.SHOW_SIGNUP,
+			SIGNALS.SIGNIN_FAILED
 		];
 	}
 
-	main(showAuth$, authFailed$, showSignup$) {
+	main(showAuth$, authFailed$, showSignup$, signupFailed$) {
 		const showedAuth$ =
 			      es.flatMap(
 				      showAuth$,
@@ -40,9 +41,15 @@ export class Auth extends BaseComponent {
 				      Auth.renderAuthForm
 			      );
 
+		const signupAfterFailed$ =
+			es.flatMap(
+				signupFailed$,
+				Auth.renderSignupForm
+			);
+
 		return {
 			[ SIGNALS.CHECK_AUTH ]: es.merge(showedAuth$, authAfterFailed$),
-			[ SIGNALS.CHECK_SIGNUP ]: showedSignup$
+			[ SIGNALS.CHECK_SIGNUP ]: es.merge(showedSignup$, signupAfterFailed$)
 		};
 	}
 

@@ -27,11 +27,12 @@ export class Lecture extends BaseComponent {
 			);
 
 		return {
-			[ SIGNALS.COMPLETE_LECTURE ]: chooseLecture$
+			[ SIGNALS.CHOOSE_CONTENT ]: chooseLecture$
 		}
 	}
 
 	static renderLecture({header, lecture, nextId, previousId}) {
+		const showAnother$ = es.EventStream();
 		const previousPart$ = es.EventStream();
 		const nextPart$ = es.EventStream();
 		const lectureLength = lecture.length - 1;
@@ -44,6 +45,8 @@ export class Lecture extends BaseComponent {
 					previous$={previous$}
 					next$={next$}
 					first={first}
+					nextId={nextId}
+					prevId={previousId}
 					last={last}
 					index={index}
 				/>,
@@ -59,6 +62,11 @@ export class Lecture extends BaseComponent {
 					lectureLoop(header, lecture[index], previousPart$, nextPart$, true, false, index);
 				} else if(index > 0) {
 					lectureLoop(header, lecture[index], previousPart$, nextPart$, false, false, index);
+				} else {
+					es.push(
+						showAnother$,
+						previousId
+					);
 				}
 			}
 		);
@@ -70,32 +78,16 @@ export class Lecture extends BaseComponent {
 					lectureLoop(header, lecture[index], previousPart$, nextPart$, false, true, index);
 				} else if(index < lectureLength) {
 					lectureLoop(header, lecture[index], previousPart$, nextPart$, false, false, index);
+				} else {
+					es.push(
+						showAnother$,
+						nextId
+					);
 				}
 			}
 		);
 
-		return es.merge(
-			es.map(
-				es.filter(
-					es.filter(
-						previousPart$,
-						index => index < 0
-					),
-					() => previousId !== null
-				),
-				() => previousId
-			),
-			es.map(
-				es.filter(
-					es.filter(
-						nextPart$,
-						index => index > lectureLength
-					),
-					() => nextId !== null
-				),
-				() => nextId
-			)
-		);
+		return showAnother$;
 	}
 
 }

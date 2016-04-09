@@ -6,6 +6,8 @@ import es from 'event-streams';
 const LECTURE_TYPE = 1;
 const TASK_TYPE = 2;
 
+let contents = [];
+
 export class StateModel {
 
 	static checkAuthorizedData(data) {
@@ -86,10 +88,44 @@ export class StateModel {
 		const contents$ = es.EventStream();
 
 		ajax.get('/api/contents', {}, data => {
-			es.push(contents$, StateModel.parseContents(data));
+			contents = StateModel.parseContents(data);
+			es.push(contents$, contents);
 		});
 
 		return contents$;
+	}
+
+	static getContentTypeById(id) {
+		if(contents.length !== 0) {
+			const result$ = es.EventStream();
+
+			setTimeout(() =>
+				es.push(
+					result$,
+					StateModel.findContentById(contents, id)
+				),
+				0
+			);
+
+			return es.filter(
+				result$,
+				d => d !== void 0
+			);
+		} else {
+			return es.filter(
+				es.map(
+					StateModel.getContents(),
+					contents => StateModel.findContentById(contents, id)
+				),
+				d => d !== void 0
+			);
+		}
+	}
+
+	static findContentById(contents, cId) {
+		const res = contents.filter(({id}) => id === cId);
+
+		return res.length ? res[0] : void 0;
 	}
 
 	static parseContents(data) {

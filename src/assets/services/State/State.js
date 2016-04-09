@@ -18,11 +18,12 @@ export class State extends BaseComponent {
 			SIGNALS.GET_CONTENTS,
 			SIGNALS.CHOOSE_LECTURE,
 			SIGNALS.CHOOSE_TASK,
-			SIGNALS.DONE_TASK
+			SIGNALS.DONE_TASK,
+			SIGNALS.CHOOSE_CONTENT
 		];
 	}
 
-	main(auth$, signup$, getContents$, chooseLecture$, chooseTask$, doneTask$) {
+	main(auth$, signup$, getContents$, chooseLecture$, chooseTask$, doneTask$, chooseContent$) {
 		const contents$ = State.getAfterAuth(getContents$);
 		const {authFailed$, authSuccess$} = State.auth(auth$);
 		const signupFailed$ = State.signup(signup$);
@@ -30,6 +31,28 @@ export class State extends BaseComponent {
 		es.subscribe(
 			doneTask$,
 			State.doneTask
+		);
+
+		const content$ =
+			es.flatMap(
+				chooseContent$,
+				State.findContentType
+			);
+
+		es.subscribe(
+			es.filter(
+				content$,
+				({type}) => StateModel.isLectureType(type)
+			),
+			({id}) => history.push({pathname: `/lecture/${id}`})
+		);
+
+		es.subscribe(
+			es.filter(
+				content$,
+				({type}) => StateModel.isTaskType(type)
+			),
+			({id}) => history.push({pathname: `/task/${id}`})
 		);
 
 		const lectures$ =
@@ -43,6 +66,7 @@ export class State extends BaseComponent {
 				chooseTask$,
 				StateModel.getTask
 			);
+
 
 		return {
 			[ SIGNALS.AUTH_FAILED ]: authFailed$,
@@ -136,5 +160,9 @@ export class State extends BaseComponent {
 				}
 			}
 		);
+	}
+
+	static findContentType(id) {
+		return StateModel.getContentTypeById(id);
 	}
 }

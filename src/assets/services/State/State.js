@@ -25,7 +25,7 @@ export class State extends BaseComponent {
 	main(auth$, signup$, getContents$, chooseLecture$, chooseTask$, doneTask$) {
 		const contents$ = State.getAfterAuth(getContents$);
 		const {authFailed$, authSuccess$} = State.auth(auth$);
-		State.signup(signup$);
+		const signupFailed$ = State.signup(signup$);
 		
 		es.subscribe(
 			doneTask$,
@@ -49,7 +49,8 @@ export class State extends BaseComponent {
 			[ SIGNALS.AUTH_SUCCESS ]: authSuccess$,
 			[ SIGNALS.SHOW_CONTENTS ]: contents$,
 			[ SIGNALS.SHOW_LECTURE ]: lectures$,
-			[ SIGNALS.SHOW_TASK ]: tasks$
+			[ SIGNALS.SHOW_TASK ]: tasks$,
+			[ SIGNALS.SIGNIN_FAILED ]: signupFailed$
 		};
 	}
 
@@ -92,6 +93,8 @@ export class State extends BaseComponent {
 	}
 	
 	static signup(signup$) {
+		const failed$ = es.EventStream();
+		
 		es.subscribe(
 			es.flatMap(
 				signup$,
@@ -101,11 +104,15 @@ export class State extends BaseComponent {
 				if(res === 'Ok') {
 					history.push({pathname: '/'});
 				} else {
-					history.push({pathname: '/signup'});
-					//TODO: correct error handling
+					es.push(
+						failed$,
+						res
+					);
 				}
 			}
 		);
+		
+		return failed$;
 	}
 
 	static getAfterAuth(userData$) {

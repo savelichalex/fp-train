@@ -154,7 +154,7 @@ export class Auth extends BaseComponent {
 				),
 				() => ({
 					status: 422,
-					message: 'User with this username is exist',
+					message: {username:'User with this username is exist'},
 					res
 				})
 			);

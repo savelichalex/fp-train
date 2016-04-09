@@ -5,6 +5,7 @@ export const SIGNALS = {
 	SHOW_AUTH: 'showAuth',
 	SHOW_SIGNUP: 'showSignup',
 	CHECK_SIGNUP: 'checkSignup',
+	SIGNUP_FAILED: 'signupFailed',
 	AUTH_FAILED: 'authFailed',
 	AUTH_SUCCESS: 'authSuccess',
 	SHOW_LECTURE: 'showLecture',

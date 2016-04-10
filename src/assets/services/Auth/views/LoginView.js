@@ -6,6 +6,8 @@ import es from 'event-streams';
 import Card from 'material-ui/lib/card/card';
 import TextField from 'material-ui/lib/text-field';
 import RaisedButton from 'material-ui/lib/raised-button';
+import FlatButton from 'material-ui/lib/flat-button';
+import Divider from 'material-ui/lib/divider';
 
 import { history } from '../../Router/Router';
 
@@ -28,8 +30,8 @@ export class LoginView extends Component {
 				{username}
 				{password}
 				<RaisedButton onClick={() => this.collectData()}>OK</RaisedButton>
-				<span>or</span>
-				<RaisedButton onClick={() => history.push({pathname: '/signup'})}>Sign up</RaisedButton>
+				<Divider />
+				<FlatButton onClick={() => history.push({pathname: '/signup'})}>Sign up</FlatButton>
 			</Card>
 		);
 	}

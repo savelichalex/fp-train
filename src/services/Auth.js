@@ -76,31 +76,42 @@ export class Auth extends BaseComponent {
 						if (err) {
 							es.throwError(fromDb$, err);
 						} else {
-							bcrypt.compare(password, result.rows[0].password, (err, r) => {
-								if(err) {
-									es.throwError(fromDb$, err);
-								} else {
-									if(r) {
-										es.push(
-											fromDb$,
-											{
-												data: result.rows[0],
-												req,
-												res
-											}
-										);
+							if(result.rows.length && result.rows[0] && result.rows[0].password) {
+								bcrypt.compare(password, result.rows[0].password, (err, r) => {
+									if(err) {
+										es.throwError(fromDb$, err);
 									} else {
-										es.push(
-											fromDb$,
-											{
-												data: void 0,
-												req,
-												res
-											}
-										);
+										if(r) {
+											es.push(
+												fromDb$,
+												{
+													data: result.rows[0],
+													req,
+													res
+												}
+											);
+										} else {
+											es.push(
+												fromDb$,
+												{
+													data: void 0,
+													req,
+													res
+												}
+											);
+										}
 									}
-								}
-							});
+								});
+							} else {
+								es.push(
+									fromDb$,
+									{
+										data: void 0,
+										req,
+										res
+									}
+								);
+							}
 						}
 					});
 			}
